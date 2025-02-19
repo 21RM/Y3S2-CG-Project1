@@ -1,10 +1,10 @@
 # CG 2024/2025
 
-## Group T0xG0y
+## Group T07G06
 | Name             | Number    | E-Mail             |
 | ---------------- | --------- | ------------------ |
-| John Doe         | 201901010 | ...                |
-| Jane Doe         | 201901011 | ...                |
+| Dinis Galvão       | 202207217 | up202207217@up.pt              |
+| Joana Pimenta       | 202206120 | up202206120@up.pt              |
 
 ----
 
