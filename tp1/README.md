@@ -1,12 +1,12 @@
 # CG 2024/2025
 
-## Group T0xG0y
+## Group T07G06
 
 ## TP 1 Notes
 
-(add your main observations/remarks about your experiments here, in a bulleted list, and remove this line. Some examples below)
 
-- In exercise 1 we observed X
-- In exercise 2 we had difficulties in Y
+- In exercise 1 we observed that we had to invert the indexes to be able to see both sides of the parallelogram. 
+- In exercise 2 the resolution was similar to the previous shapes, so it was a straight forward implementation.
 
-![Screenshot 1](screenshots/cg-t0xgxx-tp1-n.png)
+![Screenshot 1](tp1/screenshots/cgra-t07g06-tp1-1.png)
+
