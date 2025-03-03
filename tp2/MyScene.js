@@ -1,9 +1,5 @@
 import { CGFscene, CGFcamera, CGFaxis } from "../lib/CGF.js";
-import { MyDiamond } from "./MyDiamond.js";
-import { MyTriangle } from "./MyTriangle.js";
-import { MyTriangleSmall } from "./MyTriangleSmall.js"; 
-import { MyTriangleBig } from "./MyTriangleBig.js";
-import { MyParallelogram } from "./MyParallelogram.js";
+import { MyTrangram} from "./MyTrangram.js";
 
 
 /**
@@ -30,24 +26,15 @@ export class MyScene extends CGFscene {
 
     //Initialize scene objects
     this.axis = new CGFaxis(this);
-    this.diamond = new MyDiamond(this);
-    this.triangle = new MyTriangle(this);
-    this.triangleSmall = new MyTriangleSmall(this);
-    this.triangleBig = new MyTriangleBig(this);
-    this.parallelogram = new MyParallelogram(this);
+    this.tangram = new MyTrangram(this);
 
 
     //Objects connected to MyInterface
-    this.displayParallelogram = true;
-    this.displayTriangle = true;
-    this.displayDiamond = true;
+
     this.displayAxis = true;
     this.scaleFactor = 1;
-    this.showTriangle = true;
-    this.showDiamond = true;
-    this.showParallelogram = true;
-    this.showTriangleSmall = true;
-    this.showTriangleBig = true;
+    this.displayTangram= true;
+
 
   }
   initLights() {
@@ -109,69 +96,9 @@ export class MyScene extends CGFscene {
     this.multMatrix(sca);
 
     // ---- BEGIN Primitive drawing section
-    if (this.showDiamond) {
-      this.pushMatrix();
-  
-      // Apply translation first
-      let translationMatrix = [
-          1, 0, 0, 0, 
-          0, 1, 0, 0,  
-          0, 0, 1, 0,
-          -2.5,0.7, 0, 1
-      ];
-      this.multMatrix(translationMatrix);
-  
-      // Apply rotation (45 degrees)
-      let angle = Math.PI / 4;
-      let rotationMatrix = [
-          Math.cos(angle),Math.sin(angle), 0, 0,
-          -Math.sin(angle), Math.cos(angle), 0, 0,
-          0, 0, 1, 0,
-          0, 0, 0, 1
-      ];
-      this.multMatrix(rotationMatrix);
-  
-      this.diamond.display();
-      this.popMatrix();
-  }
-  
-
-    if (this.showTriangle){
-      this.pushMatrix();
-      this.translate(-3.6,2.4,0);
-      this.triangle.display();
-      this.popMatrix();
-    }
-    if (this.showParallelogram){
-      this.pushMatrix();
-      this.translate(1,1,0);
-      this.rotate(Math.PI, 1, 0, 0);  
-      this.parallelogram.display();
-      this.popMatrix();
-    } 
-    if (this.showTriangleSmall){
-      this.pushMatrix();
-      this.translate(1,0,0);
-      this.triangleSmall.display();
-      this.popMatrix();
-      this.pushMatrix();
-      this.translate(-3.9,0.7,0);
-      this.rotate(-Math.PI/4,0,0,1);
-      this.triangleSmall.display();
-      this.popMatrix();
-    } 
-    if (this.showTriangleBig){
-      this.pushMatrix();
-      this.translate(-0.4,-0.4,0);
-      this.rotate((Math.PI/4), 0, 0, 1); 
-      this.triangleBig.display();
-      this.popMatrix();
-      this.pushMatrix();
-      this.translate(-0.4,2.4,0);
-      this.rotate(3*Math.PI/4, 0, 0, 1); 
-      this.triangleBig.display();
-      this.popMatrix();
-    }
+   if(this.displayTangram){
+    this.tangram.display();
+   }
 
     // ---- END Primitive drawing section
   }

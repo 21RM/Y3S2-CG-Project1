@@ -31,23 +31,23 @@ export class MyScene extends CGFscene {
     //Initialize scene objects
     this.axis = new CGFaxis(this);
     this.diamond = new MyDiamond(this);
-   // this.triangle = new MyTriangle(this);
-   // this.triangleSmall = new MyTriangleSmall(this);
-    //this.triangleBig = new MyTriangleBig(this);
-    //this.parallelogram = new MyParallelogram(this);
+    this.triangle = new MyTriangle(this);
+    this.triangleSmall = new MyTriangleSmall(this);
+    this.triangleBig = new MyTriangleBig(this);
+    this.parallelogram = new MyParallelogram(this);
 
 
     //Objects connected to MyInterface
-//     this.displayParallelogram = true;
-//    this.displayTriangle = true;
+    this.displayParallelogram = true;
+    this.displayTriangle = true;
     this.displayDiamond = true;
     this.displayAxis = true;
     this.scaleFactor = 1;
-//   this.showTriangle = false;
+    this.showTriangle = false;
     this.showDiamond = false;
-//   this.showParallelogram = true;
-//   this.showTriangleSmall = false;
-//   this.showTriangleBig = false;
+    this.showParallelogram = true;
+    this.showTriangleSmall = false;
+    this.showTriangleBig = false;
 
   }
   initLights() {
