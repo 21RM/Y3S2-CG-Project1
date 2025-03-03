@@ -5,6 +5,6 @@
 ## TP 2 Notes
 
 
-- In exercise 2 we created a tangram using traslations and rotations. 
-![Screenshot 1](tp2/screenshots/cgra-t07g06-tp2-1.png)
+- In exercise 2 we created a tangram using translations and rotations. 
+![Screenshot 1](tp2/screenshots/cg-t07g06-tp2-1.png)
 
