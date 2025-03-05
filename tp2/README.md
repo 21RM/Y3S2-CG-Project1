@@ -16,5 +16,5 @@
 
 - In exercise 4, we built a unit cube by composing multiple planar faces. We developed a MyQuad class representing a unit square and then created MyUnitCubeQuad by reusing a single quad instance for all six faces through appropriate translations and rotations. This modular approach helped us practice transformation matrices and object composition in WebCGF, leading to an efficient and clean solution.
 
-![Screenshot 2](tp2/screenshots/cg-t07g06-tp2-2.png)
+![Screenshot 2](tp2/screenshots/cg-t07g06-tp2-3.png)
 
