@@ -109,6 +109,7 @@ export class MyScene extends CGFscene {
 
 
     initMaterials() {
+
         // Red Ambient (no diffuse, no specular)
         this.material1 = new CGFappearance(this);
         this.material1.setAmbient(1, 0, 0, 1.0);
@@ -189,4 +190,5 @@ export class MyScene extends CGFscene {
         this.popMatrix();
         // ---- END Primitive drawing section
     }
+
 }
