@@ -23,3 +23,7 @@ This happens because each face will have a consistent and independent normal, un
 
 ![Screenshot 3](tp3/screenshots/cg-t07g06-tp3-3.png)
 
+- In this part, we created a cylinder-like shape using shared vertices and smooth shading using normals.
+
+![Screenshot 4](tp3/screenshots/cg-t07g06-tp3-4.png)
+
