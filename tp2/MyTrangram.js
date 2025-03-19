@@ -59,6 +59,7 @@ export class MyTrangram extends CGFobject {
         this.scene.translate(1,0,0);
         this.triangleSmall.display();
         this.scene.popMatrix();
+        
         this.scene.pushMatrix();
         this.scene.translate(-3.9,0.7,0);
         this.scene.rotate(-Math.PI/4,0,0,1);
