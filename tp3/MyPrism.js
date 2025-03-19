@@ -5,29 +5,66 @@ import {CGFobject} from '../lib/CGF.js';
  * @param scene - Reference to MyScene object
  */
 export class MyPrism extends CGFobject {
-    constructor(scene) {
+    constructor(scene, slices, stacks) {
+
         super(scene);
+        this.slices = slices;
+        this.stacks = stacks;
         this.initBuffers();
     }
     
     initBuffers() {
-        this.vertices = [
-            -0.5, -0.5, 0,	//0
-            0.5, -0.5, 0,	//1
-            0.5, 0.5, 0,	//2
-            -0.5, 0.5, 0    //3
-        ];
+        this.vertices = [];
+        this.indices = [];
+        this.normals = [];
 
-        //Counter-clockwise reference of vertices
-        this.indices = [
-            0, 1, 2,
-            2, 3, 0
-        ];
+        let alpha = 2 * Math.PI / this.slices;
+        let stackHeight = 1.0 / this.stacks;
 
-        //The defined indices (and corresponding vertices)
-        //will be read in groups of three to draw triangles
+        for (let i = 0; i < this.slices; i++) {
+            let angleI   = i * alpha;
+            let angleI1  = (i + 1) * alpha;
+            let angleMid = angleI + alpha / 2.0; 
+
+            let nx = Math.cos(angleMid);
+            let ny = Math.sin(angleMid);
+
+            for (let j = 0; j < this.stacks; j++) {
+                let zLow = j * stackHeight;     
+                let zHigh = (j + 1) * stackHeight;
+
+
+                let xA = Math.cos(angleI);
+                let yA = Math.sin(angleI);
+                let xB = Math.cos(angleI1);
+                let yB = Math.sin(angleI1);
+
+                this.vertices.push(xA, yA, zLow);
+                this.normals.push(nx, ny, 0);
+
+                this.vertices.push(xB, yB, zLow);
+                this.normals.push(nx, ny, 0);
+
+                this.vertices.push(xA, yA, zHigh);
+                this.normals.push(nx, ny, 0);
+
+                this.vertices.push(xB, yB, zHigh);
+                this.normals.push(nx, ny, 0);
+
+                let base = (i * this.stacks + j) * 4;
+
+                let A = base; 
+                let B = base + 1;
+                let C = base + 2;
+                let D = base + 3;
+
+                this.indices.push(A, B, C);
+
+                this.indices.push(C, B, D);
+            }
+        }
+
         this.primitiveType = this.scene.gl.TRIANGLES;
-
         this.initGLBuffers();
     }
 }
