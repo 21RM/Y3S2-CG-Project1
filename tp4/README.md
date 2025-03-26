@@ -9,4 +9,7 @@
 
 ![Screenshot 1](tp4/screenshots/cg-t07g06-tp4-1.png)
 
+- In this exercise, we correctly applied distinct textures to each face of a 3D cube and even made them less blury.
+
+![Screenshot 2](tp4/screenshots/cg-t07g06-tp4-2.png)
 
