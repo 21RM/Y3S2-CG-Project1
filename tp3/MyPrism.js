@@ -67,5 +67,15 @@ export class MyPrism extends CGFobject {
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
     }
+    display() {
+        this.scene.pushMatrix();
+    
+        this.scene.rotate(-Math.PI / 2, 1, 0, 0); 
+    
+        super.display();
+    
+        this.scene.popMatrix();
+    }
+    
 }
 

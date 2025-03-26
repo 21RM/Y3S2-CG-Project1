@@ -1,6 +1,7 @@
 import { CGFscene, CGFcamera, CGFaxis, CGFappearance, CGFtexture } from "../lib/CGF.js";
 import { MyQuad } from "./MyQuad.js";
 import { MyTangram } from "./MyTangram.js";
+import { MyUnitCubeQuad } from "./MyUnitCubeQuad.js";
 
 /**
  * MyScene
@@ -44,12 +45,26 @@ export class MyScene extends CGFscene {
         this.texture1 = new CGFtexture(this, 'images/board.jpg');
         this.texture2 = new CGFtexture(this, 'images/floor.png');
         this.texture3 = new CGFtexture(this, 'images/window.jpg');
+        this.textMineSide = new CGFtexture(this, 'images/mineSide.png');
+        this.textMineTop = new CGFtexture(this, 'images/mineTop.png');
+        this.textMineBottom = new CGFtexture(this, 'images/mineBottom.png');
         //-------
+
+        this.cube = new MyUnitCubeQuad(
+            this,
+            this.textMineTop,      // topo
+            this.textMineSide,     // frente
+            this.textMineSide,     // direita
+            this.textMineSide,     // trás
+            this.textMineSide,     // esquerda
+            this.textMineBottom    // fundo
+        );
 
         //-------Objects connected to MyInterface
         this.displayAxis = true;
         this.displayQuad = false;
-        this.displayTangram = true
+        this.displayTangram = false;
+        this.displayCube = true;
         this.scaleFactor = 5;
         this.selectedTexture = -1;        
         this.wrapS = 0;
@@ -77,9 +92,9 @@ export class MyScene extends CGFscene {
     }
 
     setDefaultAppearance() {
-        this.setAmbient(0.2, 0.4, 0.8, 1.0);
-        this.setDiffuse(0.2, 0.4, 0.8, 1.0);
-        this.setSpecular(0.2, 0.4, 0.8, 1.0);
+        this.setAmbient(0.8, 0.8, 0.8, 1.0);
+        this.setDiffuse(0.8, 0.8, 0.8, 1.0);
+        this.setSpecular(0.8, 0.8, 0.8, 1.0);
         this.setShininess(10.0);
     }
 
@@ -128,6 +143,11 @@ export class MyScene extends CGFscene {
 
         if (this.displayTangram) {
             this.tangram.display();
+        }
+
+        if (this.displayCube) {
+            this.setDefaultAppearance(); 
+            this.cube.display();
         }
 
         // Default texture filtering in WebCGF is LINEAR. 
