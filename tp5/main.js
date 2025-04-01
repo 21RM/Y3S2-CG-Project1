@@ -1,12 +1,11 @@
-
 import {CGFapplication} from '../lib/CGF.js';
-import { MyScene } from './MyScene.js';
+import { ShaderScene } from './ShaderScene.js';
 import { MyInterface } from './MyInterface.js';
 
 function main()
 {
     var app = new CGFapplication(document.body);
-    var myScene = new MyScene();
+    var myScene = new ShaderScene();
     var myInterface = new MyInterface();
 
     app.init();
@@ -16,7 +15,7 @@ function main()
 
     myInterface.setActiveCamera(myScene.camera);
 
-    app.run();
+	app.run();
 }
 
 main();

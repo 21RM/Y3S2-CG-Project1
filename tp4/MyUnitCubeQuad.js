@@ -26,7 +26,7 @@ export class MyUnitCubeQuad extends CGFobject {
         // Front face
         this.scene.pushMatrix();
         this.scene.translate(0, 0, 0.5);
-        if (this.texturesFront) this.texturesFront.apply();
+        if (this.textureFront) this.textureFront.bind();
         this.quad.display();
         this.scene.popMatrix();
 
@@ -34,7 +34,7 @@ export class MyUnitCubeQuad extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0, 0, -0.5);
         this.scene.rotate(Math.PI, 0, 1, 0);
-        if (this.texturesBack) this.texturesBack.apply();
+        if (this.textureBack) this.textureBack.bind();
         this.quad.display();
         this.scene.popMatrix();
 
@@ -42,7 +42,7 @@ export class MyUnitCubeQuad extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(-0.5, 0, 0);
         this.scene.rotate(-Math.PI / 2, 0, 1, 0);
-        if (this.texturesLeft) this.texturesLeft.apply();
+        if (this.textureLeft) this.textureLeft.bind();
         this.quad.display();
         this.scene.popMatrix();
 
@@ -50,7 +50,7 @@ export class MyUnitCubeQuad extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0.5, 0, 0);
         this.scene.rotate(Math.PI / 2, 0, 1, 0);
-        if (this.texturesRight) this.texturesRight.apply();
+        if (this.textureRight) this.textureRight.bind();
         this.quad.display();
         this.scene.popMatrix();
 
@@ -58,7 +58,7 @@ export class MyUnitCubeQuad extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0, 0.5, 0);
         this.scene.rotate(-Math.PI / 2, 1, 0, 0);
-        if (this.texturesTop) this.texturesTop.apply();
+        if (this.textureTop) this.textureTop.bind();
         this.quad.display();
         this.scene.popMatrix();
 
@@ -66,7 +66,7 @@ export class MyUnitCubeQuad extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0, -0.5, 0);
         this.scene.rotate(Math.PI / 2, 1, 0, 0);
-        if (this.texturesBottom) this.texturesBottom.apply();
+        if (this.textureBottom) this.textureBottom.bind();
         this.quad.display();
         this.scene.popMatrix();
     }
