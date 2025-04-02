@@ -100,8 +100,8 @@ export class ShaderScene extends CGFscene {
 		this.testShaders[5].setUniformsValues({ uSampler2: 1 });
 		this.testShaders[6].setUniformsValues({ uSampler2: 1 });
 		this.testShaders[6].setUniformsValues({ timeFactor: 0 });
-		this.testShaders[10].setUniformsValues({ uSampler2: 1 });
-		this.testShaders[10].setUniformsValues({ timeFactor: 0 });
+		this.testShaders[11].setUniformsValues({ uSampler2: 1 });
+		this.testShaders[11].setUniformsValues({ timeFactor: 0 });
 
 
 
@@ -117,9 +117,9 @@ export class ShaderScene extends CGFscene {
 			'Animation example': 6,
 			'Sepia': 7,
 			'Gray': 8,
-			'Convolution': 8,
-			'Blue and Yellow':9,
-			'Water Effect':10
+			'Convolution': 9,
+			'Blue and Yellow':10,
+			'Water Effect':11
 
 		};
 
@@ -200,8 +200,8 @@ export class ShaderScene extends CGFscene {
 
 	// called periodically (as per setUpdatePeriod() in init())
 	update(t) {
-		if (this.selectedExampleShader == 10){
-			this.testShaders[10].setUniformsValues({ timeFactor: t / 550 % 100});
+		if (this.selectedExampleShader == 11){
+			this.testShaders[11].setUniformsValues({ timeFactor: t / 550 % 100});
 		}
 		// only shader 6 is using time factor
 		if (this.selectedExampleShader == 6)
