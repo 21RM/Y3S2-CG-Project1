@@ -100,6 +100,7 @@ export class ShaderScene extends CGFscene {
 		this.testShaders[6].setUniformsValues({ uSampler2: 1 });
 		this.testShaders[6].setUniformsValues({ timeFactor: 0 });
 		this.testShaders[10].setUniformsValues({ uSampler2: 1 });
+		this.testShaders[10].setUniformsValues({ timeFactor: 0 });
 
 
 
@@ -197,6 +198,9 @@ export class ShaderScene extends CGFscene {
 
 	// called periodically (as per setUpdatePeriod() in init())
 	update(t) {
+		if (this.selectedExampleShader == 10){
+			this.testShaders[10].setUniformsValues({ timeFactor: t / 550 % 100});
+		}
 		// only shader 6 is using time factor
 		if (this.selectedExampleShader == 6)
 			// Dividing the time by 100 "slows down" the variation (i.e. in 100 ms timeFactor increases 1 unit).
