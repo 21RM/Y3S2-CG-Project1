@@ -13,3 +13,6 @@
 
 ![Screenshot 2](tp5/screenshots/cg-t07g06-tp5-2.png)
 
+- In this exercise we added movement to the water.
+![Screenshot 3](tp5/screenshots/cg-t07g06-tp5-3.png)
+
