@@ -3,7 +3,7 @@
 
 ## Group T07G06
 
-## TP 4 Notes
+## TP 5 Notes
 
 - In this exercise we addapted the coordinates to a value between 0 and 1 and then in the frag shader if y > 0.5 is yellow, else is blue.
 
