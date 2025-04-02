@@ -5,11 +5,11 @@
 
 ## TP 4 Notes
 
-- In this exercise, we mapped the texture from the image into the tangram. There were some difficulties at first, but it turned out to be very straight forward.
+- In this exercise we addapted the coordinates to a value between 0 and 1 and then in the frag shader if y > 0.5 is yellow, else is blue.
 
 ![Screenshot 1](tp5/screenshots/cg-t07g06-tp5-1.png)
 
-- In this exercise, we correctly applied distinct textures to each face of a 3D cube and even made them less blury.
+- Next we changed the animation to move on the X axis and made a gray.frag shader script similar to the sepia.frag script.
 
-![Screenshot 2](tp4/screenshots/cg-t07g06-tp5-2.png)
+![Screenshot 2](tp5/screenshots/cg-t07g06-tp5-2.png)
 
