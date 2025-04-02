@@ -89,6 +89,7 @@ export class ShaderScene extends CGFscene {
 			new CGFshader(this.gl, "shaders/texture3.vert", "shaders/texture3.frag"),
 			new CGFshader(this.gl, "shaders/texture3anim.vert", "shaders/texture3anim.frag"),
 			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/sepia.frag"),
+			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/gray.frag"),
 			new CGFshader(this.gl, "shaders/texture1.vert", "shaders/convolution.frag"),
 			new CGFshader(this.gl, "shaders/teapot.vert", "shaders/teapot.frag"),
 			new CGFshader(this.gl, "shaders/water.vert", "shaders/water.frag")
@@ -115,6 +116,7 @@ export class ShaderScene extends CGFscene {
 			'Multiple textures in VS and FS': 5,
 			'Animation example': 6,
 			'Sepia': 7,
+			'Gray': 8,
 			'Convolution': 8,
 			'Blue and Yellow':9,
 			'Water Effect':10
