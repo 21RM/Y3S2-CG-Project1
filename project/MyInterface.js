@@ -17,6 +17,8 @@ export class MyInterface extends CGFinterface {
         // https://github.com/dataarts/dat.gui/blob/master/API.md
         this.gui = new dat.GUI();
 
+        this.gui.add(this.scene, 'toggleHeliControl').name('Helicopter Mode'); // enable helicopter mode
+
         // Scene elements folder
         let sceneElementsFolder = this.gui.addFolder('Scene Elements');
         // V //
@@ -29,15 +31,16 @@ export class MyInterface extends CGFinterface {
             let groundFolder = sceneElementsFolder.addFolder('Ground');
             // V //
                 groundFolder.add(this.scene, 'displayGround').name('Show Ground'); // show ground
+                groundFolder.add(this.scene, 'groundScale', 500, 1000).name('Scale'); // scale ground
             // -----------
             // Sky Sphere folder
             let skySphereFolder = sceneElementsFolder.addFolder('Sky Sphere');
             // V //
-                skySphereFolder.add(this.scene, 'displaySkySphere').name('Show Sky Sphere'); // show sky sphere
-                skySphereFolder.add(this.scene, 'skySphereScale', 50, 500).name('Scale'); // scale sky sphere
-                skySphereFolder.add({ invert: () => { this.scene.skySphere.toggleInvert();} }, 'invert').name('Invert Faces'); // invert faces
-                skySphereFolder.add(this.scene, 'skySphereTextureKey', Object.keys(this.scene.skySphereTextures)).name('Texture'); // change texture
-        
+                skySphereFolder.add(this.scene, 'displayPanorama').name('Show Sky Sphere'); // show sky sphere
+                skySphereFolder.add(this.scene, 'panoramaScale', 50, 1000).name('Scale'); // scale sky sphere
+                skySphereFolder.add({ invert: () => { this.scene.panorama.toggleInvert();} }, 'invert').name('Invert Faces'); // invert faces
+                skySphereFolder.add(this.scene, 'panoramaTextureKey', Object.keys(this.scene.panoramaTextures)).name('Texture'); // change texture
+                skySphereFolder.add(this.scene, 'panoramaFollowCamera').name('Follow Camera'); // follow camera
             // -----------
         //----------------------
 

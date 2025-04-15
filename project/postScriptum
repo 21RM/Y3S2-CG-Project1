@@ -1,0 +1,3 @@
+
+enableNormalViz() -> To enable Normals
+ex: this.panorama.enableNormalViz(); this.panorama.display()

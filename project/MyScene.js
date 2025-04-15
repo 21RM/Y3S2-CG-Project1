@@ -1,7 +1,7 @@
 import { CGFscene, CGFcamera, CGFaxis, CGFtexture, CGFappearance } from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
-import { MySphere } from "./MySphere.js";
-
+import { MyPanorama } from './MyPanorama.js';
+import { MyHeli } from "./MyHeli.js";
 /**
  * MyScene
  * @constructor
@@ -30,28 +30,30 @@ export class MyScene extends CGFscene {
 
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
-    this.ground = new MyPlane(this, 64);
-    this.skySphere = new MySphere(this, 64, 64, true);
+    this.ground = new MyPlane(this, 64, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.jpg'));
+    let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
+    this.panorama = new MyPanorama(this, panoramaTexture);
+    this.heli = new MyHeli(this);
 
 
-    // Variables connnected to myInterface //
+    //------- Variables connnected to myInterface -------//
+    // AXIS
     this.displayAxis = true;
-    this.displayGround = true;
-    // ----- Sky Sphere -----
-    this.displaySkySphere = true;
-    this.skySphereScale = 50;
-    this.skySphereTextures = {
-      'none' : null,
-      'earth': new CGFtexture(this, 'textures/earth.jpg'),
+    // GROUND
+    this.displayGround = false;
+    this.groundScale = 500;
+    // SKY SPHERE
+    this.displayPanorama = false;
+    this.panoramaScale = 200;
+    this.panoramaTextures = {
+      'None' : null,
+      'Sky': 'textures/sky.png',
     };
-    this.skySphereTextureKey = 'earth';
-    this.skySphereMaterial = new CGFappearance(this);
-    this.skySphereMaterial.setAmbient(1, 1, 1, 1);
-    this.skySphereMaterial.setDiffuse(1, 1, 1, 1);
-    this.skySphereMaterial.setSpecular(0, 0, 0, 1);
-    this.skySphereMaterial.setEmission(1, 1, 1, 1);
-    this.skySphereMaterial.setShininess(10);
-    //------------------------------------ //
+    this.panoramaTextureKey = 'Sky';
+    this.panoramaFollowCamera = true;
+    //HELICOPTER
+    this.toggleHeliControl = false;
+    //---------------------------------------------------//
 
   }
   initLights() {
@@ -62,10 +64,10 @@ export class MyScene extends CGFscene {
   }
   initCameras() {
     this.camera = new CGFcamera(
-      0.4,
+      1.2,
       0.1,
       1000,
-      vec3.fromValues(200, 200, 200),
+      vec3.fromValues(50, 50, 50),
       vec3.fromValues(0, 0, 0)
     );
   }
@@ -109,26 +111,31 @@ export class MyScene extends CGFscene {
     this.applyViewMatrix();
 
     // Draw axis
-    if (this.displayAxis) this.axis.display();
+    if (this.displayAxis){ 
+      this.axis.display();
+    }
 
     this.setDefaultAppearance();
 
     // Draw ground
     if (this.displayGround) {
       this.pushMatrix();
-      this.scale(400, 1, 400);
+      this.scale(this.groundScale, 1, this.groundScale);
       this.rotate(-Math.PI / 2, 1, 0, 0);
       this.ground.display();
       this.popMatrix();
     }
+  
     // Draw sky sphere
-    if (this.displaySkySphere){
-      this.pushMatrix();
-      this.scale(this.skySphereScale, this.skySphereScale, this.skySphereScale);
-      this.skySphereMaterial.setTexture(this.skySphereTextures[this.skySphereTextureKey]);
-      this.skySphereMaterial.apply();
-      this.skySphere.display();
-      this.popMatrix();
+    if (this.displayPanorama) {
+      this.panorama.texture = this.panoramaTextures[this.panoramaTextureKey];
+      this.panorama.display();
     }
+
+    // Draw helicopter
+    this.pushMatrix();
+    this.scale(10, 10, 10);
+    this.heli.display();
+    this.popMatrix();
   }
 }
