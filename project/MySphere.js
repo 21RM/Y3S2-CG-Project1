@@ -22,32 +22,26 @@ export class MySphere extends CGFobject {
         this.texCoords = [];
         this.indices = [];
 
-        // Generate vertices, normals, and texture coordinates.
         for (let stack = 0; stack <= this.stacks; stack++) {
-            let phi = Math.PI * stack / this.stacks; // angle from 0 to PI
+            let phi = Math.PI * stack / this.stacks; 
             for (let slice = 0; slice <= this.slices; slice++) {
-                let theta = 2 * Math.PI * slice / this.slices; // angle from 0 to 2*PI
+                let theta = 2 * Math.PI * slice / this.slices;
 
-                // Spherical coordinates for a unit sphere:
                 let x = Math.sin(phi) * Math.cos(theta);
                 let y = Math.cos(phi);
                 let z = Math.sin(phi) * Math.sin(theta);
 
-                // Save vertex position.
                 this.vertices.push(x, y, z);
 
-                // Compute normals. If inverting faces, flip the normals.
                 if (this.invertFaces)
                     this.normals.push(-x, -y, -z);
                 else
                     this.normals.push(x, y, z);
 
-                // Texture coordinates range linearly from 0 to 1.
                 this.texCoords.push(1 - slice / this.slices, stack / this.stacks);
             }
         }
 
-        // Generate indices for triangles.
         for (let stack = 0; stack < this.stacks; stack++) {
             for (let slice = 0; slice < this.slices; slice++) {
             let first = stack * (this.slices + 1) + slice;
@@ -66,6 +60,7 @@ export class MySphere extends CGFobject {
         this.initGLBuffers();
     }
     toggleInvert() {
+        console.log("Inverting faces");
         this.invertFaces = !this.invertFaces;
         this.initBuffers();
     }
