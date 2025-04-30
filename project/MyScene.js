@@ -2,6 +2,7 @@ import { CGFscene, CGFcamera, CGFaxis, CGFtexture, CGFappearance } from "../lib/
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
+import { MyCockpitGlass } from "./MyCockpitGlass.js";
 /**
  * MyScene
  * @constructor
@@ -26,21 +27,25 @@ export class MyScene extends CGFscene {
 
     this.enableTextures(true);
 
-    this.setUpdatePeriod(50);
+    this.setUpdatePeriod(20);
 
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.ground = new MyPlane(this, 64, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.jpg'));
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
-    this.heli = new MyHeli(this);
+    this.heliPosition = vec3.fromValues(0, 0, 0);
+    this.heliVelocity = vec3.fromValues(0, 0, 0);
+    this.heli = new MyHeli(this, this.heliPosition, 0, this.heliVelocity);
+    const glassTex = new CGFtexture(this, 'textures/cockpitGlass.png');
+    this.cockpitGlass = new MyCockpitGlass(this, glassTex);
 
 
     //------- Variables connnected to myInterface -------//
     // AXIS
-    this.displayAxis = true;
+    this.displayAxis = false;
     // GROUND
-    this.displayGround = false;
+    this.displayGround = true;
     this.groundScale = 500;
     // SKY SPHERE
     this.displayPanorama = false;
@@ -52,7 +57,9 @@ export class MyScene extends CGFscene {
     this.panoramaTextureKey = 'Sky';
     this.panoramaFollowCamera = true;
     //HELICOPTER
-    this.toggleHeliControl = false;
+    this.helicopterMode = false;
+    this.followHeli3P = false;
+    this.followHeli1P = false;
     //---------------------------------------------------//
 
   }
@@ -63,34 +70,58 @@ export class MyScene extends CGFscene {
     this.lights[0].update();
   }
   initCameras() {
-    this.camera = new CGFcamera(
-      1.2,
-      0.1,
-      1000,
-      vec3.fromValues(50, 50, 50),
-      vec3.fromValues(0, 0, 0)
-    );
-  }
-  checkKeys() {
-    var text = "Keys pressed: ";
-    var keysPressed = false;
-
-    // Check for key codes e.g. in https://keycode.info/
-    if (this.gui.isKeyPressed("KeyW")) {
-      text += " W ";
-      keysPressed = true;
-    }
-
-    if (this.gui.isKeyPressed("KeyS")) {
-      text += " S ";
-      keysPressed = true;
-    }
-    if (keysPressed)
-      console.log(text);
+    this.camDefault = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(50, 50, 50), vec3.fromValues(0, 0, 0));
+    this.camHeli1P = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
+    this.camHeli3P = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
+    this.camera = this.camDefault;
   }
 
-  update(t) {
-    this.checkKeys();
+  update(currTime) {
+    if (!this.lastTime) this.lastTime = currTime;
+    const delta = currTime - this.lastTime;
+    this.lastTime = currTime;
+
+    this.heli.update(delta);
+
+    if (this.followHeli1P){
+      const [hx, hy, hz] = this.heli.position;
+      const yaw   = this.heli.rotation;
+      const pitch = this.heli.pitch;
+      const roll  = this.heli.roll;
+
+      const M = mat4.create();
+      mat4.rotateY(M, M, yaw);
+      mat4.rotateX(M, M, pitch);
+      mat4.rotateZ(M, M, roll);
+
+      const localCam    = vec3.fromValues( 0,  1.9,  1.2);
+      const localTarget = vec3.fromValues( 0,  1.9,  1.3);
+      const worldCam    = vec3.create();
+      const worldTarget = vec3.create();
+      vec3.transformMat4(worldCam, localCam, M);
+      vec3.transformMat4(worldTarget, localTarget, M);
+      vec3.add(worldCam, worldCam, [hx,hy,hz]);
+      vec3.add(worldTarget, worldTarget, [hx,hy,hz]);
+
+      this.camHeli1P.position.set(worldCam);
+      this.camHeli1P.target.set(worldTarget);
+      this.camera = this.camHeli1P;
+    }
+    else if (this.followHeli3P){
+      const [hx,hy,hz] = this.heli.position;
+      const yaw = this.heli.rotation;
+      const back = 10, up = 10;
+      const cx = hx - Math.sin(yaw)*back,
+            cz = hz - Math.cos(yaw)*back,
+            cy = hy + up;
+      this.camHeli3P.position.set([cx,cy,cz]);
+      this.camHeli3P.target.set([hx,hy,hz]);
+      this.camera = this.camHeli3P;
+    }
+    else {
+      this.camera = this.camDefault;
+    }
+
   }
 
   setDefaultAppearance() {
@@ -134,8 +165,11 @@ export class MyScene extends CGFscene {
 
     // Draw helicopter
     this.pushMatrix();
-    this.scale(10, 10, 10);
     this.heli.display();
     this.popMatrix();
+
+    if (this.followHeli1P) {
+      this.cockpitGlass.display();
+    }
   }
 }
