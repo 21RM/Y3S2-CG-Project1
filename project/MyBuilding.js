@@ -18,10 +18,10 @@ export class MyBuilding extends CGFobject {
         this.moduleDepth = 100;
 
         this.appearance = new CGFappearance(scene);
-        this.appearance.setAmbient(0.4, 0.4, 0.4, 1);
+        this.appearance.setAmbient(0.1, 0.1, 0.1, 1);
         this.appearance.setDiffuse(color[0]/255, color[1]/255, color[2]/255, 1);
         this.appearance.setSpecular(0.1, 0.1, 0.1, 1);
-        this.appearance.setShininess(8);
+        this.appearance.setShininess(0);
 
         this.left = new MyPrismSolid(scene,
             [this.moduleWidth * 0.75, this.moduleDepth * 0.75],
@@ -67,7 +67,7 @@ export class MyBuilding extends CGFobject {
        this.signAppearance.setDiffuse(1, 1, 1, 1);
        this.signAppearance.setSpecular(0, 0, 0, 1);
        this.signAppearance.setShininess(10);       
-       this.signAppearance.loadTexture("texturesGuides/prismGuide.jpg");
+       this.signAppearance.loadTexture("textures/bombeiros_sign.jpg");
        this.signAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
     }
@@ -88,6 +88,7 @@ export class MyBuilding extends CGFobject {
         // Center module
         this.scene.pushMatrix();
         this.appearance.apply();
+        this.center.enableNormalViz();
         this.center.display();
         this.displayWindows(this.numFloorsCenter, this.moduleWidth, this.moduleDepth, true);
         this.scene.popMatrix();

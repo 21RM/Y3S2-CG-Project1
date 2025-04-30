@@ -66,13 +66,13 @@ export class MyScene extends CGFscene {
     this.followHeli3P = false;
     this.followHeli1P = false;
     this.toggleHeliControl = false;
-    this.displayHeli = true;
+    this.displayHeli = false;
     // BUILDING
-    this.displayBuilding = false;
+    this.displayBuilding = true;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
-    this.buildingColor = [255, 0, 0]; // vermelho
+    this.buildingColor = [180, 180, 180]; 
     //---------------------------------------------------//
 
     // -------- Objects that depend on interface variables --------- //
