@@ -66,8 +66,9 @@ export class MyScene extends CGFscene {
     this.followHeli3P = false;
     this.followHeli1P = false;
     this.toggleHeliControl = false;
+    this.displayHeli = true;
     // BUILDING
-    this.displayBuilding = true;
+    this.displayBuilding = false;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
@@ -201,11 +202,12 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
     
-  
-    // Draw helicopter
-    this.pushMatrix();
-    this.heli.display();
-    this.popMatrix();
+    
+    if (this.displayHeli) { // Draw helicopter
+      this.pushMatrix();
+      this.heli.display();
+      this.popMatrix();
+    }
 
     if (this.followHeli1P) {
       this.cockpitGlass.display();

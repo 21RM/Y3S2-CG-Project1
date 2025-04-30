@@ -67,7 +67,7 @@ export class MyBuilding extends CGFobject {
        this.signAppearance.setDiffuse(1, 1, 1, 1);
        this.signAppearance.setSpecular(0, 0, 0, 1);
        this.signAppearance.setShininess(10);       
-       this.signAppearance.loadTexture("textures/bombeiros_sign.jpg");
+       this.signAppearance.loadTexture("texturesGuides/prismGuide.jpg");
        this.signAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
     }
