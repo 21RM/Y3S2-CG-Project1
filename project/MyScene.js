@@ -3,6 +3,8 @@ import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
+import { MyBuilding } from './MyBuilding.js';
+
 /**
  * MyScene
  * @constructor
@@ -39,7 +41,10 @@ export class MyScene extends CGFscene {
     this.heli = new MyHeli(this, this.heliPosition, 0, this.heliVelocity);
     const glassTex = new CGFtexture(this, 'textures/cockpitGlass.png');
     this.cockpitGlass = new MyCockpitGlass(this, glassTex);
+    this.heli = new MyHeli(this);
 
+   
+    
 
     //------- Variables connnected to myInterface -------//
     // AXIS
@@ -56,11 +61,36 @@ export class MyScene extends CGFscene {
     };
     this.panoramaTextureKey = 'Sky';
     this.panoramaFollowCamera = true;
-    //HELICOPTER
+    // HELICOPTER
     this.helicopterMode = false;
     this.followHeli3P = false;
     this.followHeli1P = false;
+    this.toggleHeliControl = false;
+    // BUILDING
+    this.displayBuilding = true;
+    // Parâmetros do edifício (controláveis via interface)
+    this.buildingNumFloorsSide = 3;
+    this.buildingWindowsPerFloor = 3;
+    this.buildingColor = [255, 0, 0]; // vermelho
     //---------------------------------------------------//
+
+    // -------- Objects that depend on interface variables --------- //
+    // Criação inicial do edifício
+    this.building = new MyBuilding(this,
+      this.buildingNumFloorsSide,
+      this.buildingWindowsPerFloor,
+      this.buildingColor
+    );
+
+    // Método para atualizar o edifício dinamicamente
+    this.updateBuilding = () => {
+      this.building = new MyBuilding(this,
+        this.buildingNumFloorsSide,
+        this.buildingWindowsPerFloor,
+        this.buildingColor
+      );
+    };
+    // ------------------------------------------------------------- //
 
   }
   initLights() {
@@ -163,6 +193,15 @@ export class MyScene extends CGFscene {
       this.panorama.display();
     }
 
+    if (this.displayBuilding) {
+      this.pushMatrix();
+      //this.translate(-150, 0, -240); 
+      this.translate(0, 0, 0); 
+      this.building.display();
+      this.popMatrix();
+    }
+    
+  
     // Draw helicopter
     this.pushMatrix();
     this.heli.display();
