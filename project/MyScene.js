@@ -2,6 +2,8 @@ import { CGFscene, CGFcamera, CGFaxis, CGFtexture, CGFappearance } from "../lib/
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
+import { MyBuilding } from './MyBuilding.js';
+
 /**
  * MyScene
  * @constructor
@@ -34,13 +36,36 @@ export class MyScene extends CGFscene {
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
     this.heli = new MyHeli(this);
+    
+    // Parâmetros do edifício (controláveis via interface)
+    this.buildingNumFloorsSide = 3;
+    this.buildingWindowsPerFloor = 3;
+    this.buildingColor = [255, 0, 0]; // vermelho
 
+    // Criação inicial do edifício
+    this.building = new MyBuilding(this,
+      this.buildingNumFloorsSide,
+      this.buildingWindowsPerFloor,
+      this.buildingColor
+    );
+
+    // Método para atualizar o edifício dinamicamente
+    this.updateBuilding = () => {
+      this.building = new MyBuilding(this,
+        this.buildingNumFloorsSide,
+        this.buildingWindowsPerFloor,
+        this.buildingColor
+      );
+    };
+
+   
+    
 
     //------- Variables connnected to myInterface -------//
     // AXIS
     this.displayAxis = true;
     // GROUND
-    this.displayGround = false;
+    this.displayGround = true;
     this.groundScale = 500;
     // SKY SPHERE
     this.displayPanorama = false;
@@ -53,6 +78,7 @@ export class MyScene extends CGFscene {
     this.panoramaFollowCamera = true;
     //HELICOPTER
     this.toggleHeliControl = false;
+    this.displayBuilding = true;
     //---------------------------------------------------//
 
   }
@@ -132,10 +158,19 @@ export class MyScene extends CGFscene {
       this.panorama.display();
     }
 
+    if (this.displayBuilding) {
+      this.pushMatrix();
+      //this.translate(-150, 0, -240); 
+      this.translate(0, 0, 0); 
+      this.building.display();
+      this.popMatrix();
+    }
+    
+  
     // Draw helicopter
     this.pushMatrix();
     this.scale(10, 10, 10);
-    this.heli.display();
+   // this.heli.display();
     this.popMatrix();
   }
 }
