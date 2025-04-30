@@ -39,9 +39,8 @@ export class MyPrismSolid extends CGFobject {
         for (let i = 0; i < 4; i++) {
             this.normals.push(0, 1, 0);
         }
-        this.texCoords.push(0,0, 1,0, 1,1, 0,1);
-        this.indices.push(2, 1, 0,    
-                          3, 2, 0);
+        this.texCoords.push(0.3333, 0,  0.6667, 0,  0.6667, 0.5,  0.3333, 0.5);
+        this.indices.push(2, 1, 0,    3, 2, 0);
 
 
         let widthBot = this.bottomSides[0];
@@ -56,15 +55,22 @@ export class MyPrismSolid extends CGFobject {
         for (let i = 0; i < 4; i++) {
             this.normals.push(0, -1, 0);
         }
-        this.texCoords.push(0,0, 1,0, 1,1, 0,1);
+        this.texCoords.push(0.3333, 0.5,  0.6667, 0.5,  0.6667, 1.0,  0.3333, 1.0);
         this.indices.push(bottomStart+1, bottomStart+2, bottomStart, 
                           bottomStart+2, bottomStart+3, bottomStart);
 
         let sideFaces = [
             { topA: top_v0, topB: top_v1, botA: bot_v0, botB: bot_v1 },
-            { topA: top_v1, topB: top_v2, botA: bot_v1, botB: bot_v2 },
+            { topA: top_v1, topB: top_v2, botA: bot_v1, botB: bot_v2},
             { topA: top_v2, topB: top_v3, botA: bot_v2, botB: bot_v3 },
             { topA: top_v3, topB: top_v0, botA: bot_v3, botB: bot_v0 },
+        ];
+
+        const sideUV = [
+            { uMin: 0.6667, uMax: 1.0,   vMin: 0,    vMax: 0.5 },  // Front
+            { uMin: 0.6667, uMax: 1.0,   vMin: 0.5,  vMax: 1.0 },  // Right
+            { uMin: 0,      uMax: 0.3333, vMin: 0.5,  vMax: 1.0 },  // Back
+            { uMin: 0,      uMax: 0.3333, vMin: 0,    vMax: 0.5 }   // Left
         ];
 
         for (let s = 0; s < 4; s++) {
@@ -85,8 +91,14 @@ export class MyPrismSolid extends CGFobject {
             for (let i = 0; i < 4; i++) {
                 this.normals.push(nx, ny, nz);
             }
-            this.texCoords.push(0, 1, 1, 1, 1, 0, 0, 0);
-            this.indices.push(sideStart, sideStart+1, sideStart+2, sideStart, sideStart+2, sideStart+3);
+            let uv = sideUV[s];
+            this.texCoords.push(uv.uMin, uv.vMax,   uv.uMax, uv.vMax,   uv.uMax, uv.vMin,   uv.uMin, uv.vMin);
+            if (s === 1){
+                this.indices.push(sideStart+1, sideStart+2, sideStart+3, sideStart+1, sideStart+3, sideStart);
+            }
+            else{
+                this.indices.push(sideStart, sideStart+1, sideStart+2, sideStart, sideStart+2, sideStart+3);
+            }
         }
 
         this.primitiveType = this.scene.gl.TRIANGLES;
