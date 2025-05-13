@@ -1,5 +1,4 @@
-import {CGFobject} from '../lib/CGF.js';
-import {CGFappearance} from '../lib/CGF.js';
+import {CGFobject, CGFappearance} from '../lib/CGF.js';
 /**
 * MyPlane
 * @constructor
@@ -32,6 +31,7 @@ export class MyPlane extends CGFobject {
 		this.material.setSpecular(0, 0, 0, 1);
 		this.material.setEmission(0, 0, 0, 1);
 		this.material.setTexture(this.texture);
+		this.material.setTextureWrap('MIRRORED_REPEAT', 'REPEAT');
 		this.material.setShininess(10);
 
 		this.initBuffers();
@@ -47,7 +47,17 @@ export class MyPlane extends CGFobject {
 			for (var i = 0; i <= this.nrDivs; i++) {
 				this.vertices.push(xCoord, yCoord, 0);
 				this.normals.push(0, 0, 1);
-				this.texCoords.push(this.minS + i * this.q, this.minT + j * this.w);
+				const repeats = 15;  
+				const du = repeats / this.nrDivs;
+				const dv = repeats / this.nrDivs;
+
+				this.texCoords = [];
+
+				for (let j = 0; j <= this.nrDivs; j++) {
+					for (let i = 0; i <= this.nrDivs; i++) {
+						this.texCoords.push(i * du, j * dv);
+					}
+				}
 				xCoord += this.patchLength;
 			}
 			yCoord -= this.patchLength;

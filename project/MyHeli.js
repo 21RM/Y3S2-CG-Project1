@@ -41,6 +41,7 @@ export class MyHeli extends CGFobject {
         // Variables Conected to my interface
         this.motorPower = 1;
         this.cruiseHeight = 30;
+        this.maxSpeed = 0.01
 
 
         // Cockpit
@@ -634,9 +635,8 @@ export class MyHeli extends CGFobject {
             this.velocity[0] += this.wx * (this.motorPower / 2000);
             this.velocity[2] += this.wz * (this.motorPower / 2000);
             const speed = Math.hypot(this.velocity[0], this.velocity[2]);
-            const MAX_SPEED = 0.01;
-            if (speed > MAX_SPEED) {
-                const factor = MAX_SPEED / speed;
+            if (speed > this.maxSpeed) {
+                const factor = this.maxSpeed / speed;
                 this.velocity[0] = this.velocity[0] * factor;
                 this.velocity[2] = this.velocity[2] * factor;
             }

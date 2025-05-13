@@ -20,6 +20,7 @@ export class MyQuad extends CGFobject {
       this.material.setDiffuse(0.5, 0.5, 0.5, 1);
       this.material.setSpecular(0.5, 0.5, 0.5, 1);
       this.material.setShininess(10);
+      this.material.setEmission(1, 1, 1, 1);
       this.material.setTexture(texture);
     }
 
