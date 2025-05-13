@@ -21,7 +21,7 @@ export class MyBuilding extends CGFobject {
         this.appearance.setAmbient(0.1, 0.1, 0.1, 1);
         this.appearance.setDiffuse(color[0]/255, color[1]/255, color[2]/255, 1);
         this.appearance.setSpecular(0.1, 0.1, 0.1, 1);
-        this.appearance.setShininess(0);
+        this.appearance.setShininess(10);
 
         this.left = new MyPrismSolid(scene,
             [this.moduleWidth * 0.75, this.moduleDepth * 0.75],
@@ -59,11 +59,11 @@ export class MyBuilding extends CGFobject {
        this.doorFrameAppearance = new CGFappearance(scene);
        this.doorFrameAppearance.setAmbient(0.1, 0.1, 0.1, 1);
        this.doorFrameAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
-       this.doorFrameAppearance.setSpecular(0.3, 0.3, 0.3, 1);
+       this.doorFrameAppearance.setSpecular(0.1, 0.1, 0.1, 1);
        this.doorFrameAppearance.setShininess(10);
 
        this.signAppearance = new CGFappearance(scene);
-       this.signAppearance.setAmbient(1, 1, 1, 1);
+       this.signAppearance.setAmbient(0.2, 0.2, 0.2, 0.2);
        this.signAppearance.setDiffuse(1, 1, 1, 1);
        this.signAppearance.setSpecular(0, 0, 0, 1);
        this.signAppearance.setShininess(10);       

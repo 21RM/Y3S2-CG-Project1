@@ -4,6 +4,7 @@ import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
+import { MyGrass } from './MyGrass.js';
 
 /**
  * MyScene
@@ -34,6 +35,7 @@ export class MyScene extends CGFscene {
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.ground = new MyPlane(this, 64, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.jpg'));
+    this.grass = new MyGrass(this);
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
     this.heliPosition = vec3.fromValues(0, 0, 0);
@@ -42,7 +44,6 @@ export class MyScene extends CGFscene {
     const glassTex = new CGFtexture(this, 'textures/cockpitGlass.png');
     this.cockpitGlass = new MyCockpitGlass(this, glassTex);
     this.heli = new MyHeli(this);
-
    
     
 
@@ -53,14 +54,14 @@ export class MyScene extends CGFscene {
     this.displayGround = true;
     this.groundScale = 500;
     // SKY SPHERE
-    this.displayPanorama = false;
+    this.displayPanorama = true;
     this.panoramaScale = 200;
     this.panoramaTextures = {
       'None' : null,
       'Sky': 'textures/sky.png',
     };
     this.panoramaTextureKey = 'Sky';
-    this.panoramaFollowCamera = true;
+    this.panoramaFollowCamera = false;
     // HELICOPTER
     this.helicopterMode = false;
     this.followHeli3P = false;
@@ -68,7 +69,7 @@ export class MyScene extends CGFscene {
     this.toggleHeliControl = false;
     this.displayHeli = false;
     // BUILDING
-    this.displayBuilding = true;
+    this.displayBuilding = false;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
@@ -102,7 +103,7 @@ export class MyScene extends CGFscene {
   }
   initCameras() {
     this.camDefault = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(50, 50, 50), vec3.fromValues(0, 0, 0));
-    this.camHeli1P = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
+    this.camHeli1P = new CGFcamera(1, 0.1, 1000, vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
     this.camHeli3P = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(0,0,0), vec3.fromValues(0,0,0));
     this.camera = this.camDefault;
   }
@@ -125,17 +126,22 @@ export class MyScene extends CGFscene {
       mat4.rotateX(M, M, pitch);
       mat4.rotateZ(M, M, roll);
 
-      const localCam    = vec3.fromValues( 0,  1.9,  1.2);
+      const localCam = vec3.fromValues( 0,  1.9,  1.2);
       const localTarget = vec3.fromValues( 0,  1.9,  1.3);
-      const worldCam    = vec3.create();
+      const worldCam = vec3.create();
       const worldTarget = vec3.create();
       vec3.transformMat4(worldCam, localCam, M);
       vec3.transformMat4(worldTarget, localTarget, M);
       vec3.add(worldCam, worldCam, [hx,hy,hz]);
       vec3.add(worldTarget, worldTarget, [hx,hy,hz]);
 
+      const localUp = vec3.fromValues(0,1,0);
+      const worldUp = vec3.create();
+      vec3.transformMat4(worldUp, localUp, M);
+
       this.camHeli1P.position.set(worldCam);
       this.camHeli1P.target.set(worldTarget);
+      this.camHeli1P._up = worldUp;
       this.camera = this.camHeli1P;
     }
     else if (this.followHeli3P){
@@ -172,6 +178,9 @@ export class MyScene extends CGFscene {
     // Apply transformations corresponding to the camera position relative to the origin
     this.applyViewMatrix();
 
+
+    this.lights[0].update();
+
     // Draw axis
     if (this.displayAxis){ 
       this.axis.display();
@@ -187,6 +196,8 @@ export class MyScene extends CGFscene {
       this.ground.display();
       this.popMatrix();
     }
+
+    this.grass.display();
   
     // Draw sky sphere
     if (this.displayPanorama) {
@@ -197,7 +208,8 @@ export class MyScene extends CGFscene {
     if (this.displayBuilding) {
       this.pushMatrix();
       //this.translate(-150, 0, -240); 
-      this.translate(0, 0, 0); 
+      this.translate(0, 0, 0);
+      this.rotate(Math.PI, 0, 1, 0); 
       this.building.display();
       this.popMatrix();
     }
@@ -212,5 +224,6 @@ export class MyScene extends CGFscene {
     if (this.followHeli1P) {
       this.cockpitGlass.display();
     }
+
   }
 }
