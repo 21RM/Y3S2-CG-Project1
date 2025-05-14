@@ -1,13 +1,12 @@
 // MyWindow.js
-import { CGFobject, CGFappearance } from '../lib/CGF.js';
-import { MyPlane } from './MyPlane.js';
+import { CGFobject,CGFtexture, CGFappearance } from '../lib/CGF.js';
+import { MyQuad } from './MyQuad.js';
 import { MyPrismSolid } from './MyPrismSolid.js';
 
 export class MyWindow extends CGFobject {
-    constructor(scene) {
+    constructor(scene, glassTexPath) {
         super(scene);
 
-        this.glass = new MyPlane(scene, 1, 0, 1, 0, 1);
 
         // Frame: top, bottom, left, right (thin prisms)
         this.frameHoriz = new MyPrismSolid(scene, [0.95, 0.3], [0.95, 0.3], 0.05);
@@ -26,15 +25,21 @@ export class MyWindow extends CGFobject {
         this.frameAppearance.setDiffuse(0.3, 0.3, 0.3, 1);
         this.frameAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.frameAppearance.setShininess(10);
+        this.frameAppearance.loadTexture('textures/window_frame.jpg');
+        this.frameAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
 
         // Glass material
+        const glassTex = new CGFtexture(scene, glassTexPath);
         this.glassAppearance = new CGFappearance(scene);
-        this.glassAppearance.setAmbient(0.1, 1.0, 0.1, 1);
-        this.glassAppearance.setDiffuse(0.1, 1.0, 0.1, 1);
-        this.glassAppearance.setSpecular(0.0, 0.0, 0.0, 1);
-        this.glassAppearance.setShininess(10);
-        // this.glassAppearance.loadTexture("images/window_texture.jpg");
-        // this.glassAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
+        this.glassAppearance.setAmbient (0.2,0.2,0.2,0.4);
+        this.glassAppearance.setDiffuse (0.2,0.2,0.2,0.4);
+        this.glassAppearance.setSpecular(0.9,0.9,0.9,1);
+        this.glassAppearance.setShininess(120);
+        this.glassAppearance.setEmission(0.1,0.1,0.1,1);
+        this.glassAppearance.setTexture(glassTex);
+        this.glassAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+        this.glass = new MyQuad(scene, glassTex, this.glassAppearance);
 
         // Sill appearance (white)
         this.sillAppearance = new CGFappearance(scene);
@@ -42,14 +47,15 @@ export class MyWindow extends CGFobject {
         this.sillAppearance.setDiffuse(1, 1, 1, 1);
         this.sillAppearance.setSpecular(0.3, 0.3, 0.3, 1);
         this.sillAppearance.setShininess(20);
+        this.sillAppearance.loadTexture('textures/window_frame.jpg');
+        this.sillAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
     }
 
     display() {
         // Glass
-        this.glassAppearance.apply();
         this.scene.pushMatrix();
         this.scene.translate(0, 0, -0.45);
-        this.scene.scale(0.9, 0.9, 1);
+        this.scene.scale(0.9, -0.9, 1);
         this.glass.display();
         this.scene.popMatrix();
 

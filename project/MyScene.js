@@ -71,7 +71,7 @@ export class MyScene extends CGFscene {
     this.toggleHeliControl = false;
     this.displayHeli = false;
     // BUILDING
-    this.displayBuilding = false;
+    this.displayBuilding = true;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
