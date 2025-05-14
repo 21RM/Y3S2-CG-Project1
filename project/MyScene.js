@@ -53,6 +53,8 @@ export class MyScene extends CGFscene {
     // GROUND
     this.displayGround = true;
     this.groundScale = 500;
+    // GRASS
+    this.displayGrass = true;
     // SKY SPHERE
     this.displayPanorama = true;
     this.panoramaScale = 200;
@@ -96,7 +98,7 @@ export class MyScene extends CGFscene {
 
   }
   initLights() {
-    this.lights[0].setPosition(200, 200, 200, 1);
+    this.lights[0].setPosition(200, 200, 200, 0);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].enable();
     this.lights[0].update();
@@ -114,6 +116,7 @@ export class MyScene extends CGFscene {
     this.lastTime = currTime;
 
     this.heli.update(delta);
+    this.grass.update(delta);
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
@@ -196,8 +199,12 @@ export class MyScene extends CGFscene {
       this.ground.display();
       this.popMatrix();
     }
-
-    this.grass.display();
+    
+    if (this.displayGrass) {
+      this.pushMatrix();
+      this.grass.display();
+      this.popMatrix();
+    }
   
     // Draw sky sphere
     if (this.displayPanorama) {
