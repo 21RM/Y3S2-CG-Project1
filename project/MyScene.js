@@ -1,10 +1,11 @@
-import { CGFscene, CGFcamera, CGFaxis, CGFtexture, CGFappearance } from "../lib/CGF.js";
+import { CGFscene, CGFcamera, CGFaxis, CGFtexture} from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
 import { MyGrass } from './MyGrass.js';
+import { TextureManager } from './MyTextures.js';
 
 /**
  * MyScene
@@ -31,6 +32,10 @@ export class MyScene extends CGFscene {
     this.enableTextures(true);
 
     this.setUpdatePeriod(20);
+
+    //Initialize textures
+    this.textureManager = new TextureManager(this);
+    this.textureManager.initTextures();
 
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
@@ -69,9 +74,9 @@ export class MyScene extends CGFscene {
     this.followHeli3P = false;
     this.followHeli1P = false;
     this.toggleHeliControl = false;
-    this.displayHeli = true;
+    this.displayHeli = false;
     // BUILDING
-    this.displayBuilding = true;
+    this.displayBuilding = false;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
@@ -105,7 +110,6 @@ export class MyScene extends CGFscene {
     this.lights[0].setConstantAttenuation(0.1);
     this.lights[0].enable();
     this.lights[0].update();
-    console.log(this.lights[0]);
   }
   initCameras() {
     this.camDefault = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(50, 50, 50), vec3.fromValues(0, 0, 0));

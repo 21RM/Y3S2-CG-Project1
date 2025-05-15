@@ -2,7 +2,7 @@ import { CGFobject, CGFshader } from "../lib/CGF.js";
 import { MyGrassBlade } from "./MyGrassBlade.js";
 
 export class MyGrass extends CGFobject {
-    constructor(scene, bladeCount = 2000000, areaRadius = 200) {
+    constructor(scene, bladeCount = 1000000, areaRadius = 200) {
         super(scene);
         
         this.offsets = new Float32Array(bladeCount * 3);

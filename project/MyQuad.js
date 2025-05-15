@@ -23,7 +23,6 @@ export class MyQuad extends CGFobject {
       this.material.setEmission(1, 1, 1, 1);
     }
     if (texture != null){
-      console.log(texture);
       this.material.setTexture(texture);
     }
 
