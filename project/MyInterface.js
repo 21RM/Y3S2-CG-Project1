@@ -80,7 +80,6 @@ export class MyInterface extends CGFinterface {
             buildingFolder.add(this.scene, 'displayBuilding').name('Show Fire Station');
             buildingFolder.add(this.scene, 'buildingNumFloorsSide', 1, 6, 1).name('Side Floors').onChange(() => this.scene.updateBuilding());
             buildingFolder.add(this.scene, 'buildingWindowsPerFloor', 1, 5, 1).name('Windows/Floor').onChange(() => this.scene.updateBuilding());
-            buildingFolder.addColor(this.scene, 'buildingColor').name('Color').onChange(() => this.scene.updateBuilding());
             // -----------
         // Sky Sphere folder
         let skySphereFolder = sceneElementsFolder.addFolder("Sky Sphere");
