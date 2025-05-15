@@ -6,14 +6,13 @@ import { MyCylinder } from './MyCylinder.js';
 import { MyQuad } from './MyQuad.js';
 
 export class MyBuilding extends CGFobject {
-    constructor(scene, numFloorsSide, windowsPerFloor, color) {
+    constructor(scene, numFloorsSide, windowsPerFloor) {
         super(scene);
 
         this.floorHeight = 30;
         this.numFloorsSide = numFloorsSide;
         this.numFloorsCenter = numFloorsSide + 1;
         this.windowsPerFloor = windowsPerFloor;
-        this.color = color;
 
         this.moduleWidth = 100;
         this.moduleDepth = 100;        
