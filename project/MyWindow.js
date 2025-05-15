@@ -19,6 +19,9 @@ export class MyWindow extends CGFobject {
         // Sill: small bottom block
         this.sill = new MyPrismSolid(scene, [1.1, 1.8], [1.1, 1.8], 0.03);
 
+        const shadeTex = new CGFtexture(scene, 'textures/sillShadow.png');
+        this.sillShadow = new MyQuad(scene, shadeTex);
+
         // Frame material
         this.frameAppearance = new CGFappearance(scene);
         this.frameAppearance.setAmbient(0.2, 0.2, 0.2, 1);
@@ -31,8 +34,8 @@ export class MyWindow extends CGFobject {
         // Glass material
         const glassTex = new CGFtexture(scene, glassTexPath);
         this.glassAppearance = new CGFappearance(scene);
-        this.glassAppearance.setAmbient (0.2,0.2,0.2,0.4);
-        this.glassAppearance.setDiffuse (0.2,0.2,0.2,0.4);
+        this.glassAppearance.setAmbient (0.2,0.2,0.2,1);
+        this.glassAppearance.setDiffuse (0.7,0.7,0.7,1);
         this.glassAppearance.setSpecular(0.9,0.9,0.9,1);
         this.glassAppearance.setShininess(120);
         this.glassAppearance.setEmission(0.1,0.1,0.1,1);
@@ -109,6 +112,13 @@ export class MyWindow extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0, -0.53, 0.07);
         this.sill.display();
+        this.scene.popMatrix();
+
+        //Window sill shadow
+        this.scene.pushMatrix();
+        this.scene.translate(0, -0.60, -0.4);
+        this.scene.scale(1, 0.15, 1);
+        this.sillShadow.display();
         this.scene.popMatrix();
     }
 }

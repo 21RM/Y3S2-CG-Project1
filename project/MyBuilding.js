@@ -22,7 +22,6 @@ export class MyBuilding extends CGFobject {
         this.wallAppearance.setDiffuse (0.8, 0.8, 0.8, 1);
         this.wallAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.wallAppearance.setShininess(20);
-        this.wallAppearance.setEmission(1, 1, 1, 1);
         this.wallAppearance.loadTexture('textures/side_buildings.jpg');
         this.wallAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
@@ -31,7 +30,6 @@ export class MyBuilding extends CGFobject {
         this.centerAppearance.setDiffuse (0.8, 0.8, 0.8, 1);
         this.centerAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.centerAppearance.setShininess(20);
-        this.centerAppearance.setEmission(1, 1, 1, 1);
         this.centerAppearance.loadTexture('textures/middle_building.jpg');
         this.centerAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
@@ -86,7 +84,6 @@ export class MyBuilding extends CGFobject {
         this.doorFrameAppearance.setDiffuse (0.8, 0.8, 0.8, 1);
         this.doorFrameAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.doorFrameAppearance.setShininess(20);
-        this.doorFrameAppearance.setEmission(1, 1, 1, 1);   
         this.doorFrameAppearance.loadTexture("textures/window_frame.jpg");
         this.doorFrameAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
 
@@ -95,7 +92,6 @@ export class MyBuilding extends CGFobject {
         this.signAppearance.setDiffuse (0.8, 0.8, 0.8, 1);
         this.signAppearance.setSpecular(0.1, 0.1, 0.1, 1);
         this.signAppearance.setShininess(20);
-        this.signAppearance.setEmission(1, 1, 1, 1);   
         this.signAppearance.loadTexture("textures/bombeiros_sign.jpg");
         this.signAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
@@ -117,7 +113,6 @@ export class MyBuilding extends CGFobject {
         // Center module
         this.scene.pushMatrix();
         this.wallAppearance.apply();
-        this.center.enableNormalViz();
         this.center.display();
         this.displayWindows(this.numFloorsCenter, this.moduleWidth, this.moduleDepth, true);
         this.scene.popMatrix();

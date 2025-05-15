@@ -13,9 +13,9 @@ export class MyPanorama extends CGFobject {
         
         this.material = new CGFappearance(scene);
         this.material.setAmbient(0.2, 0.2, 0.2, 1);
-        this.material.setDiffuse(1, 1, 1, 1);
+        this.material.setDiffuse(0, 0, 0, 1);
         this.material.setSpecular(0, 0, 0, 1);
-        this.material.setEmission(1, 1, 1, 1);
+        this.material.setEmission(0.9, 0.9, 0.9, 1);
         this.material.setTexture(this.texture);
         this.material.setShininess(10);
         

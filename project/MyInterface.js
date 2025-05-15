@@ -63,8 +63,13 @@ export class MyInterface extends CGFinterface {
         let groundFolder = sceneElementsFolder.addFolder("Ground");
         // V //
             groundFolder.add(this.scene, "displayGround").name("Show Ground"); // show ground
-            groundFolder.add(this.scene, "groundScale", 500, 1000).name("Scale"); // scale ground
+            groundFolder.add(this.scene, "groundScale", 300, 1000).name("Scale"); // scale ground
             // -----------
+        // Grass Folder
+        let grassFolder = sceneElementsFolder.addFolder("Grass");
+        // V //
+          grassFolder.add(this.scene, "displayGrass").name("Show Grass")
+          // -----------
         // Heli Folder
         let heliFolder = sceneElementsFolder.addFolder("Helicopter");
         // V //

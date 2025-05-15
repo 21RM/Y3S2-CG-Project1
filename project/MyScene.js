@@ -52,9 +52,9 @@ export class MyScene extends CGFscene {
     this.displayAxis = false;
     // GROUND
     this.displayGround = true;
-    this.groundScale = 500;
+    this.groundScale = 400;
     // GRASS
-    this.displayGrass = true;
+    this.displayGrass = false;
     // SKY SPHERE
     this.displayPanorama = true;
     this.panoramaScale = 200;
@@ -69,7 +69,7 @@ export class MyScene extends CGFscene {
     this.followHeli3P = false;
     this.followHeli1P = false;
     this.toggleHeliControl = false;
-    this.displayHeli = false;
+    this.displayHeli = true;
     // BUILDING
     this.displayBuilding = true;
     // Parâmetros do edifício (controláveis via interface)
@@ -98,10 +98,14 @@ export class MyScene extends CGFscene {
 
   }
   initLights() {
-    this.lights[0].setPosition(200, 200, 200, 0);
+    this.lights[0].setPosition(200, 200, 200, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
+    this.lights[0].setLinearAttenuation(0);
+    this.lights[0].setQuadraticAttenuation(0);
+    this.lights[0].setConstantAttenuation(0.1);
     this.lights[0].enable();
     this.lights[0].update();
+    console.log(this.lights[0]);
   }
   initCameras() {
     this.camDefault = new CGFcamera(1.2, 0.1, 1000, vec3.fromValues(50, 50, 50), vec3.fromValues(0, 0, 0));
@@ -215,8 +219,9 @@ export class MyScene extends CGFscene {
     if (this.displayBuilding) {
       this.pushMatrix();
       //this.translate(-150, 0, -240); 
-      this.translate(0, 0, 0);
-      this.rotate(Math.PI, 0, 1, 0); 
+      this.translate(0, 0, 150);
+      this.rotate(Math.PI, 0, 1, 0);
+      this.scale(0.5, 0.5, 0.5); 
       this.building.display();
       this.popMatrix();
     }
@@ -224,6 +229,7 @@ export class MyScene extends CGFscene {
     
     if (this.displayHeli) { // Draw helicopter
       this.pushMatrix();
+      this.scale(5, 5, 5);
       this.heli.display();
       this.popMatrix();
     }
