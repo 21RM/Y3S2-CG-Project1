@@ -1,7 +1,9 @@
 // MyBuilding.js
-import { CGFobject, CGFappearance } from '../lib/CGF.js';
+import { CGFobject, CGFappearance, CGFtexture} from '../lib/CGF.js';
 import { MyPrismSolid } from './MyPrismSolid.js';
 import { MyWindow } from './MyWindow.js';
+import { MyCylinder } from './MyCylinder.js';
+import { MyQuad } from './MyQuad.js';
 
 export class MyBuilding extends CGFobject {
     constructor(scene, numFloorsSide, windowsPerFloor, color) {
@@ -52,6 +54,20 @@ export class MyBuilding extends CGFobject {
             this.floorHeight * this.numFloorsSide
         );
 
+        const heliRadius = this.moduleWidth * 0.3;
+        const heliHeight = 1;
+
+        this.heliPort = new MyCylinder(
+            scene,
+            heliHeight,     
+            heliRadius,     
+            heliRadius,     
+            64,            
+            1              
+            );
+
+        this.helipadTex = new CGFtexture(scene, 'textures/helipad.png');
+
         this.windowTextures = [
           'textures/window_first.png', 
           'textures/window_glass_reflective.png', 
@@ -95,6 +111,23 @@ export class MyBuilding extends CGFobject {
         this.signAppearance.loadTexture("textures/bombeiros_sign.jpg");
         this.signAppearance.setTextureWrap('CLAMP_TO_EDGE', 'CLAMP_TO_EDGE');
 
+        this.heliPortCapAppr = new CGFappearance(scene);
+        this.heliPortCapAppr.setAmbient (0.6, 0.6, 0.6, 1);
+        this.heliPortCapAppr.setDiffuse (0.1, 0.1, 0.1, 1);
+        this.heliPortCapAppr.setSpecular(0.1, 0.1, 0.1, 1);
+        this.heliPortCapAppr.setShininess(5);
+        this.heliPortCapAppr.setEmission(0.5, 0.5, 0.5, 1);
+
+        this.helipadAppr = new CGFappearance(scene);
+        this.helipadAppr.setAmbient (0.6, 0.6, 0.6, 1);
+        this.helipadAppr.setDiffuse (0.1,0.1,0.1,1);
+        this.helipadAppr.setSpecular(0.1, 0.1, 0.1, 1);
+        this.helipadAppr.setShininess(10);
+        this.helipadAppr.setEmission(0.5, 0.5, 0.5, 1);
+        this.helipadAppr.setTexture(this.helipadTex);
+        this.helipadAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+        this.helipadPlane = new MyQuad(scene, this.helipadTex, this.helipadAppr);
     }
 
     display() {
@@ -115,6 +148,20 @@ export class MyBuilding extends CGFobject {
         this.wallAppearance.apply();
         this.center.display();
         this.displayWindows(this.numFloorsCenter, this.moduleWidth, this.moduleDepth, true);
+        this.scene.popMatrix();
+
+        // Helipad
+        this.scene.pushMatrix();
+        this.scene.translate(0,this.floorHeight * this.numFloorsCenter + 0.01,0);
+        this.heliPortCapAppr.apply();
+        this.heliPort.display();
+        this.scene.popMatrix();
+        this.scene.pushMatrix();
+        this.scene.translate(0, this.floorHeight*this.numFloorsCenter+1.03, 0);
+        this.scene.rotate(-Math.PI/2, 1,0,0);
+        this.scene.scale(this.moduleWidth*0.7,this.moduleWidth*0.7, 1);
+        this.helipadAppr.apply();
+        this.helipadPlane.display();
         this.scene.popMatrix();
 
         // Right module
