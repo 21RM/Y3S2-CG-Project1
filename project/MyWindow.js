@@ -4,7 +4,7 @@ import { MyQuad } from './MyQuad.js';
 import { MyPrismSolid } from './MyPrismSolid.js';
 
 export class MyWindow extends CGFobject {
-    constructor(scene, glassTexPath) {
+    constructor(scene, tex) {
         super(scene);
 
 
@@ -19,36 +19,19 @@ export class MyWindow extends CGFobject {
         // Sill: small bottom block
         this.sill = new MyPrismSolid(scene, [1.1, 1.8], [1.1, 1.8], 0.03);
 
-        // Frame material
-        this.frameAppearance = new CGFappearance(scene);
-        this.frameAppearance.setAmbient(0.2, 0.2, 0.2, 1);
-        this.frameAppearance.setDiffuse(0.3, 0.3, 0.3, 1);
-        this.frameAppearance.setSpecular(0.1, 0.1, 0.1, 1);
-        this.frameAppearance.setShininess(10);
-        this.frameAppearance.loadTexture('textures/window_frame.jpg');
-        this.frameAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+        this.sillShadow = new MyQuad(scene, scene.sillShadeTex);
 
         // Glass material
-        const glassTex = new CGFtexture(scene, glassTexPath);
         this.glassAppearance = new CGFappearance(scene);
-        this.glassAppearance.setAmbient (0.2,0.2,0.2,0.4);
-        this.glassAppearance.setDiffuse (0.2,0.2,0.2,0.4);
+        this.glassAppearance.setAmbient (0.2,0.2,0.2,1);
+        this.glassAppearance.setDiffuse (0.7,0.7,0.7,1);
         this.glassAppearance.setSpecular(0.9,0.9,0.9,1);
         this.glassAppearance.setShininess(120);
         this.glassAppearance.setEmission(0.1,0.1,0.1,1);
-        this.glassAppearance.setTexture(glassTex);
+        this.glassAppearance.setTexture(tex);
         this.glassAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
 
-        this.glass = new MyQuad(scene, glassTex, this.glassAppearance);
-
-        // Sill appearance (white)
-        this.sillAppearance = new CGFappearance(scene);
-        this.sillAppearance.setAmbient(1, 1, 1, 1);
-        this.sillAppearance.setDiffuse(1, 1, 1, 1);
-        this.sillAppearance.setSpecular(0.3, 0.3, 0.3, 1);
-        this.sillAppearance.setShininess(20);
-        this.sillAppearance.loadTexture('textures/window_frame.jpg');
-        this.sillAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+        this.glass = new MyQuad(scene, tex, this.glassAppearance);
     }
 
     display() {
@@ -60,7 +43,7 @@ export class MyWindow extends CGFobject {
         this.scene.popMatrix();
 
         // Frame appearance
-        this.frameAppearance.apply();
+        this.scene.frameAppearance.apply();
 
         // Top frame
         this.scene.pushMatrix();
@@ -105,10 +88,17 @@ export class MyWindow extends CGFobject {
         this.scene.popMatrix();
 
         // Window sill
-        this.sillAppearance.apply();
         this.scene.pushMatrix();
         this.scene.translate(0, -0.53, 0.07);
+        this.scene.sillAppearance.apply();
         this.sill.display();
+        this.scene.popMatrix();
+
+        //Window sill shadow
+        this.scene.pushMatrix();
+        this.scene.translate(0, -0.60, -0.4);
+        this.scene.scale(1, 0.15, 1);
+        this.sillShadow.display();
         this.scene.popMatrix();
     }
 }

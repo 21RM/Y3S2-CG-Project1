@@ -1,10 +1,11 @@
-import { CGFscene, CGFcamera, CGFaxis, CGFtexture, CGFappearance } from "../lib/CGF.js";
+import { CGFscene, CGFcamera, CGFaxis, CGFtexture} from "../lib/CGF.js";
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
 import { MyGrass } from './MyGrass.js';
+import { TextureManager } from './MyTextures.js';
 
 /**
  * MyScene
@@ -32,6 +33,10 @@ export class MyScene extends CGFscene {
 
     this.setUpdatePeriod(20);
 
+    //Initialize textures
+    this.textureManager = new TextureManager(this);
+    this.textureManager.initTextures();
+
     //Initialize scene objects
     this.axis = new CGFaxis(this, 20, 1);
     this.ground = new MyPlane(this, 64, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.jpg'));
@@ -52,7 +57,9 @@ export class MyScene extends CGFscene {
     this.displayAxis = false;
     // GROUND
     this.displayGround = true;
-    this.groundScale = 500;
+    this.groundScale = 400;
+    // GRASS
+    this.displayGrass = false;
     // SKY SPHERE
     this.displayPanorama = true;
     this.panoramaScale = 200;
@@ -69,7 +76,7 @@ export class MyScene extends CGFscene {
     this.toggleHeliControl = false;
     this.displayHeli = false;
     // BUILDING
-    this.displayBuilding = true;
+    this.displayBuilding = false;
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
@@ -98,6 +105,9 @@ export class MyScene extends CGFscene {
   initLights() {
     this.lights[0].setPosition(200, 200, 200, 1);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
+    this.lights[0].setLinearAttenuation(0);
+    this.lights[0].setQuadraticAttenuation(0);
+    this.lights[0].setConstantAttenuation(0.1);
     this.lights[0].enable();
     this.lights[0].update();
   }
@@ -114,6 +124,7 @@ export class MyScene extends CGFscene {
     this.lastTime = currTime;
 
     this.heli.update(delta);
+    this.grass.update(delta);
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
@@ -196,8 +207,12 @@ export class MyScene extends CGFscene {
       this.ground.display();
       this.popMatrix();
     }
-
-    this.grass.display();
+    
+    if (this.displayGrass) {
+      this.pushMatrix();
+      this.grass.display();
+      this.popMatrix();
+    }
   
     // Draw sky sphere
     if (this.displayPanorama) {
@@ -208,8 +223,9 @@ export class MyScene extends CGFscene {
     if (this.displayBuilding) {
       this.pushMatrix();
       //this.translate(-150, 0, -240); 
-      this.translate(0, 0, 0);
-      this.rotate(Math.PI, 0, 1, 0); 
+      this.translate(0, 0, 150);
+      this.rotate(Math.PI, 0, 1, 0);
+      this.scale(0.5, 0.5, 0.5); 
       this.building.display();
       this.popMatrix();
     }
@@ -217,6 +233,7 @@ export class MyScene extends CGFscene {
     
     if (this.displayHeli) { // Draw helicopter
       this.pushMatrix();
+      this.scale(5, 5, 5);
       this.heli.display();
       this.popMatrix();
     }
