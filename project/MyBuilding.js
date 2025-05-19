@@ -15,7 +15,9 @@ export class MyBuilding extends CGFobject {
         this.windowsPerFloor = windowsPerFloor;
 
         this.moduleWidth = 100;
-        this.moduleDepth = 100;        
+        this.moduleDepth = 100;
+        
+        this.helipadPos = vec3.fromValues(scene.buildingPos[0], (this.floorHeight*this.numFloorsCenter + scene.buildingPos[1])*scene.buildingScale[1], scene.buildingPos[2]);
 
 
         this.left = new MyPrismSolid(scene,
