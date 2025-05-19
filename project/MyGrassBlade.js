@@ -12,8 +12,12 @@ export class MyGrassBlade extends CGFobject {
         this.material.setEmission(0,0,0,1);
         this.material.setShininess(10);
     
+        this.vao = this.gl.createVertexArray();
+        this.gl.bindVertexArray(this.vao);
+
         this.initBuffers();
         this.initGLBuffers();
+
         this.gl.bindVertexArray(null);
     }
 
@@ -42,8 +46,6 @@ export class MyGrassBlade extends CGFobject {
         ];
 
         this.primitiveType = this.scene.gl.TRIANGLES;
-        this.vao = this.gl.createVertexArray();
-        this.gl.bindVertexArray(this.vao);
     }
 
     setTexture(tex) {

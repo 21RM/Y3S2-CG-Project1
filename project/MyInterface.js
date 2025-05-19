@@ -47,7 +47,7 @@ export class MyInterface extends CGFinterface {
           this.scene.heli.dir = [0, 0];
         });
         heliControlFolder.add(this.scene.heli, "motorPower", 0.1, 3) .name("Motor Power"); // helicopter aceleration
-        heliControlFolder.add(this.scene.heli, "maxSpeed", 0.005, 0.05) .name("Max Speed"); // helicopter aceleration
+        heliControlFolder.add(this.scene.heli, "maxSpeed", 0.01, 0.10) .name("Max Speed"); // helicopter aceleration
 
         heliControlFolder.domElement.style.display = "none";
 
@@ -63,8 +63,13 @@ export class MyInterface extends CGFinterface {
         let groundFolder = sceneElementsFolder.addFolder("Ground");
         // V //
             groundFolder.add(this.scene, "displayGround").name("Show Ground"); // show ground
-            groundFolder.add(this.scene, "groundScale", 500, 1000).name("Scale"); // scale ground
+            groundFolder.add(this.scene, "groundScale", 300, 1000).name("Scale"); // scale ground
             // -----------
+        // Grass Folder
+        let grassFolder = sceneElementsFolder.addFolder("Grass");
+        // V //
+          grassFolder.add(this.scene, "displayGrass").name("Show Grass")
+          // -----------
         // Heli Folder
         let heliFolder = sceneElementsFolder.addFolder("Helicopter");
         // V //
@@ -73,9 +78,8 @@ export class MyInterface extends CGFinterface {
         let buildingFolder = sceneElementsFolder.addFolder('Fire Station');
         // V //
             buildingFolder.add(this.scene, 'displayBuilding').name('Show Fire Station');
-            buildingFolder.add(this.scene, 'buildingNumFloorsSide', 1, 6, 1).name('Side Floors').onChange(() => this.scene.updateBuilding());
+            buildingFolder.add(this.scene, 'buildingNumFloorsSide', 1, 5, 1).name('Side Floors').onChange(() => this.scene.updateBuilding());
             buildingFolder.add(this.scene, 'buildingWindowsPerFloor', 1, 5, 1).name('Windows/Floor').onChange(() => this.scene.updateBuilding());
-            buildingFolder.addColor(this.scene, 'buildingColor').name('Color').onChange(() => this.scene.updateBuilding());
             // -----------
         // Sky Sphere folder
         let skySphereFolder = sceneElementsFolder.addFolder("Sky Sphere");
@@ -89,6 +93,8 @@ export class MyInterface extends CGFinterface {
         let forestFolder = sceneElementsFolder.addFolder("Forest");
             // Forest controls
             forestFolder.add(this.scene, 'displayForest').name('Show Forest');
+            forestFolder.add(this.scene, 'forestCount', 0, 300, 1).name('Tree Count').onChange(() => this.scene.updateForest());
+            forestFolder.add(this.scene, 'forestSemiRadius', 0, 180, 1).name('Forest Radius').onChange(() => this.scene.updateForest());
             
     //----------------------
     
@@ -117,7 +123,7 @@ export class MyInterface extends CGFinterface {
     // mark it as active in the array
     this.activeKeys[event.code] = true;
 
-    if (this.scene.helicopterMode && this.scene.heli.isOff) {
+    if (this.scene.helicopterMode && this.scene.heli.isOff && !this.scene.heli.parking) {
       switch (event.code) {
         case "KeyA":
           this.dir[0] = -1;
@@ -145,8 +151,9 @@ export class MyInterface extends CGFinterface {
   processKeyUp(event) {
     this.activeKeys[event.code] = false;
     if (this.scene.helicopterMode) {
-      if (this.scene.heli.isOff) {
+      if (this.scene.heli.isOff && !this.scene.heli.parking) {
         switch (event.code) {
+          // Movement
           case "KeyA":
             this.dir[0] = this.activeKeys["KeyD"] ? 1 : 0;
             break;
@@ -169,12 +176,20 @@ export class MyInterface extends CGFinterface {
         this.scene.heli.dir = this.dir;
       }
       if (event.code === "KeyP") {
-        if (!this.scene.heli.isOff) this.scene.heli.takingOff = true;
+        if (!this.scene.heli.isOff) {
+          this.scene.heli.takingOff = true;
+          this.scene.heli.parked = false;
+        }
       }
       if (event.code === "KeyC") {
         this.scene.helicopterMode = false;
         this.heliControlFolder.domElement.style.display = "none";
         this.heliModeCtrl.setValue(this.scene.helicopterMode);
+      }
+      if (event.code === "KeyL") {
+        if (!this.scene.heli.hasWater){
+          this.scene.heli.handleLpress();
+        }
       }
     } else {
       if (event.code === "KeyC") {

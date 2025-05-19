@@ -9,7 +9,7 @@ import { CGFappearance } from '../lib/CGF.js';
  * @param material - (Optional) CGFappearance. If provided, used directly; otherwise a new appearance is created with the given texture.
  */
 export class MyQuad extends CGFobject {
-  constructor(scene, texture, material = null) {
+  constructor(scene, texture = null, material = null) {
     super(scene);
 
     if (material) {
@@ -21,6 +21,8 @@ export class MyQuad extends CGFobject {
       this.material.setSpecular(0.5, 0.5, 0.5, 1);
       this.material.setShininess(10);
       this.material.setEmission(1, 1, 1, 1);
+    }
+    if (texture != null){
       this.material.setTexture(texture);
     }
 

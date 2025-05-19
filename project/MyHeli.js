@@ -9,16 +9,29 @@ export class MyHeli extends CGFobject {
      * @param {CGFscene} scene - The scene. 
      */ 
     constructor(scene, position = [0, 0, 0], rotation = 0, velocity = [0, 0, 0]) { 
-        // Movement Variables
         super(scene);
+
+        // heli variables
+        this.heliScale = vec3.fromValues(4, 4, 4);
+        this.hasWater = false;
+        this.counter = 0;
+
+        // Movement Variables
+        this.baseFlyingHeight = null;
         this.position = position;
         this.rotation = rotation;
         this.rotationSpeed = 0;
         this.velocity = velocity;
         this.velocityY = velocity[1];
         this.acelerationY = 0;
-        this.brake = -0.015;
+        this.brake = -0.05;
         this.maxSpeed = 5;
+        this.parked = true;
+        this.parking = false;
+        this.parkingBrakeInitiated = false;
+        this.parkingStep = 0;
+        this.pointingToHelipad = false;
+        this.aboveHelipad = false;
         this.isOff = false;
         this.takingOff = false;
         this.descending = false;
@@ -29,19 +42,23 @@ export class MyHeli extends CGFobject {
         this._targetPitch = 0;
         this._targetRoll  = 0;
         this.hoverWobbleAngle = 0;   // running phase for the sine wave
-        this.hoverWobbleAmp   = 0.15; // max ±0.2 units up/down
+        this.hoverWobbleAmp   = 0.4; // max ±0.2 units up/down
         this.hoverWobbleFreq  = 0.005; // controls speed of the wobble
 
         // Movement variables related with keyboard
         this.dir = [0, 0];
         this.turnInput = 0;
-        this.wx = 0;
-        this.wy = 0;
+        this.wx = 0;  //world x
+        this.wy = 0;  //world z
 
         // Variables Conected to my interface
-        this.motorPower = 1;
+        this.motorPower = 2;
         this.cruiseHeight = 30;
-        this.maxSpeed = 0.01
+        this.maxSpeed = 0.05
+
+        // Variables conected to my building
+        this.helipadPos = vec3.fromValues(0,0,0);
+        
 
 
         // Cockpit
@@ -83,90 +100,90 @@ export class MyHeli extends CGFobject {
 
         // default
         this.defaultAppearance = new CGFappearance(this.scene);
-        this.defaultAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.defaultAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.defaultAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.defaultAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.defaultAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.defaultAppearance.setShininess(10);
+        this.defaultAppearance.setShininess(300);
 
         //heli red
         this.heliRedAppearance = new CGFappearance(this.scene);
-        this.heliRedAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.heliRedAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.heliRedAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.heliRedAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.heliRedAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.heliRedAppearance.setShininess(10);
+        this.heliRedAppearance.setShininess(300);
         this.heliRedAppearance.loadTexture("textures/helicopterRed.png");
 
         // front cockpick
         this.cockpitFrontAppearance = new CGFappearance(this.scene);
-        this.cockpitFrontAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.cockpitFrontAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.cockpitFrontAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.cockpitFrontAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.cockpitFrontAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.cockpitFrontAppearance.setShininess(10);
+        this.cockpitFrontAppearance.setShininess(300);
         this.cockpitFrontAppearance.loadTexture("textures/frontCockpit.jpg");
 
         // middle cylinder cockpit
         this.cockpitCylinderAppearance = new CGFappearance(this.scene);
-        this.cockpitCylinderAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.cockpitCylinderAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.cockpitCylinderAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.cockpitCylinderAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.cockpitCylinderAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.cockpitCylinderAppearance.setShininess(10);
+        this.cockpitCylinderAppearance.setShininess(300);
         this.cockpitCylinderAppearance.loadTexture("textures/cylinderCockpit.jpg");
 
         // back cockpit
         this.cockpitBackAppearance = new CGFappearance(this.scene);
-        this.cockpitBackAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.cockpitBackAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.cockpitBackAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.cockpitBackAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.cockpitBackAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.cockpitBackAppearance.setShininess(10);
+        this.cockpitBackAppearance.setShininess(300);
         this.cockpitBackAppearance.loadTexture("textures/backCockpit.jpg");
 
         // tail 
         this.tailAppearence = new CGFappearance(this.scene);
         this.tailAppearance = new CGFappearance(this.scene);
-        this.tailAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.tailAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.tailAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.tailAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.tailAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.tailAppearance.setShininess(10);
+        this.tailAppearance.setShininess(300);
         this.tailAppearance.loadTexture("textures/tail.jpg");
 
         // tail top prism
         this.tailTopPrismAppearance = new CGFappearance(this.scene);
-        this.tailTopPrismAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.tailTopPrismAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.tailTopPrismAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.tailTopPrismAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.tailTopPrismAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.tailTopPrismAppearance.setShininess(10);
+        this.tailTopPrismAppearance.setShininess(300);
         this.tailTopPrismAppearance.loadTexture("textures/tailPrismTop.jpg");
 
         // top rotor base bottom
         this.topRotorBaseBottomAppearance = new CGFappearance(this.scene);
-        this.topRotorBaseBottomAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.topRotorBaseBottomAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.topRotorBaseBottomAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.topRotorBaseBottomAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.topRotorBaseBottomAppearance.setSpecular(0.2, 0.2, 0.2, 1);
-        this.topRotorBaseBottomAppearance.setShininess(10);
+        this.topRotorBaseBottomAppearance.setShininess(300);
         this.topRotorBaseBottomAppearance.loadTexture("textures/topRotorBaseBottom.jpg");
 
         // top rotor base top
         this.topRotorBaseTopAppearance = new CGFappearance(this.scene);
-        this.topRotorBaseTopAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.topRotorBaseTopAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.topRotorBaseTopAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.topRotorBaseTopAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.topRotorBaseTopAppearance.setSpecular(0.2, 0.2, 0.2, 1);
-        this.topRotorBaseTopAppearance.setShininess(10);
+        this.topRotorBaseTopAppearance.setShininess(300);
         this.topRotorBaseTopAppearance.loadTexture("textures/topRotorBaseTop.jpg");
 
         // metalic
         this.metalicAppearance = new CGFappearance(this.scene);
-        this.metalicAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.metalicAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.metalicAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.metalicAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.metalicAppearance.setSpecular(0.9, 0.9, 0.9, 1);
-        this.metalicAppearance.setShininess(10);
+        this.metalicAppearance.setShininess(300);
         this.metalicAppearance.loadTexture("textures/metal.png");
 
         // helice
         this.heliceAppearance = new CGFappearance(this.scene);
-        this.heliceAppearance.setAmbient(0.9, 0.9, 0.9, 1);
-        this.heliceAppearance.setDiffuse(0.7, 0.7, 0.7, 1);
+        this.heliceAppearance.setAmbient(0.0, 0.0, 0.0, 1);
+        this.heliceAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.heliceAppearance.setSpecular(0.2, 0.2, 0.2, 1);
-        this.heliceAppearance.setShininess(10);
+        this.heliceAppearance.setShininess(300);
         this.heliceAppearance.loadTexture("textures/helice.jpg");
 
     }
@@ -176,7 +193,8 @@ export class MyHeli extends CGFobject {
     display() {
         // MAIN Movement Matrix
         this.scene.pushMatrix();
-        this.scene.translate(this.position[0], this.position[1] + 1.55, this.position[2]);
+        this.scene.translate(this.position[0], this.position[1], this.position[2]);
+        this.scene.scale(this.heliScale[0], this.heliScale[1], this.heliScale[2]);
         this.scene.rotate(this.rotation, 0, 1, 0);
         this.scene.rotate(this.pitch, 1,0,0);
         this.scene.rotate(this.roll, 0,0,1);
@@ -550,21 +568,21 @@ export class MyHeli extends CGFobject {
 
 
     update(timeDelta) {
+        if (this.parking) this.park(timeDelta);
         if (this.takingOff) this.take_off(timeDelta);
-
         if (this.isOff) {
-            this.accelerate(this.dir);
+            this.accelerate(this.dir, timeDelta);
             this.turn(this.turnInput, timeDelta);
             this.hoverWobbleAngle += timeDelta * this.hoverWobbleFreq;
-            this.position[1] = this.cruiseHeight + Math.sin(this.hoverWobbleAngle) * this.hoverWobbleAmp;
+            this.position[1] = this.baseFlyingHeight + Math.sin(this.hoverWobbleAngle) * this.hoverWobbleAmp;
             this.position[0] += this.velocity[0] * timeDelta;
             this.position[2] += this.velocity[2] * timeDelta;
             this.rotation += this.rotationSpeed * timeDelta;
-        } else {
+        } else if (this.takingOff) {
             if (this.descending) {
-                this.position[1] = Math.max(this.position[1] + this.velocityY, this.cruiseHeight);
+                this.position[1] = Math.max(this.position[1] + this.velocityY, this.helipadPos[1] + this.cruiseHeight);
             } else {
-                this.position[1] = Math.min(this.position[1] + this.velocityY, this.cruiseHeight);
+                this.position[1] = Math.min(this.position[1] + this.velocityY, this.helipadPos[1] + this.cruiseHeight);
             }
         }
 
@@ -575,7 +593,6 @@ export class MyHeli extends CGFobject {
 
     turn(turnInput, timeDelta) {
         const accelRate = this.motorPower / 2000;
-        
         if (turnInput !== 0) {
             this.tailRotorAngleSpeed += accelRate * timeDelta * turnInput;
             this.tailRotorAngleSpeed = Math.max(-0.5, Math.min(0.5, this.tailRotorAngleSpeed));
@@ -597,7 +614,7 @@ export class MyHeli extends CGFobject {
     }
 
 
-    accelerate(dir) {
+    accelerate(dir, timeDelta) {
         const [ix, iz] = dir;
         if (ix===0 && iz===0) {
             this._targetPitch = 0;
@@ -608,7 +625,7 @@ export class MyHeli extends CGFobject {
             this._targetRoll  =  ix * MAX_TILT;
         }
 
-        const SMOOTH = 0.1;
+        const SMOOTH = 0.05;
         this.pitch += (this._targetPitch - this.pitch) * SMOOTH;
         this.roll  += (this._targetRoll  - this.roll ) * SMOOTH;
 
@@ -629,7 +646,7 @@ export class MyHeli extends CGFobject {
 
         this.velocityXZ = [vx, vz];
 
-        const decel = Math.abs(this.brake) / 30; 
+        const decel = (Math.abs(this.brake) / 1000) * timeDelta; 
         
         if (ix !== 0 || iz !== 0) {
             this.velocity[0] += this.wx * (this.motorPower / 2000);
@@ -665,20 +682,25 @@ export class MyHeli extends CGFobject {
     }
 
     take_off(timeDelta) {
-        let heightObjective = this.position[1] - this.cruiseHeight;
-        if (heightObjective < 0) {
-            this.topRotorAngleSpeed = Math.min(this.topRotorAngleSpeed + (this.motorPower/20000) * timeDelta, this.cruiseHeight/60);
-        } else {
-            this.topRotorAngleSpeed = Math.max(this.topRotorAngleSpeed - (this.motorPower/20000) * timeDelta, this.cruiseHeight/60);
+        let heightObjective = this.position[1] - (this.cruiseHeight+this.helipadPos[1]);
+        if (this.cruiseHeight != 0){
+            if (heightObjective < 0) {
+                this.topRotorAngleSpeed = Math.min(this.topRotorAngleSpeed + (this.motorPower/20000) * timeDelta, this.cruiseHeight/60);
+            } else {
+                this.topRotorAngleSpeed = Math.max(this.topRotorAngleSpeed - (this.motorPower/20000) * timeDelta, this.cruiseHeight/60);
+            }
+        }
+        else {
+            const decel = (this.motorPower / 20000) * timeDelta;
+            this.topRotorAngleSpeed = Math.max(0, this.topRotorAngleSpeed - decel);
         }
 
-
-        if ((this.position[1] <= this.cruiseHeight + (this.velocityY * this.velocityY) / (2 * this.brake)) && !this.breaking) {
+        if ((this.position[1] <= (this.cruiseHeight+this.helipadPos[1]) + (this.velocityY * this.velocityY) / (2 * this.brake)) && !this.breaking) {
             this.descending = false;
             this.acelerationY = Math.max((this.topRotorAngleSpeed - this.gravity*3)*timeDelta, 0) / 300;
             this.velocityY += this.acelerationY;
         } 
-        else if ((this.position[1] >= this.cruiseHeight - (this.velocityY * this.velocityY) / (2 * this.brake)) && !this.breaking){
+        else if ((this.position[1] >= (this.cruiseHeight+this.helipadPos[1]) - (this.velocityY * this.velocityY) / (2 * this.brake)) && !this.breaking){
             this.descending = true;
             this.acelerationY = Math.min((-this.topRotorAngleSpeed + this.gravity*3)*timeDelta, 0) / 100;
             this.velocityY += this.acelerationY;
@@ -687,11 +709,175 @@ export class MyHeli extends CGFobject {
             this.breaking = true;
             this.descending == false ? this.acelerationY = this.brake : this.acelerationY = -this.brake;
             this.descending == false ? this.velocityY = Math.max(this.velocityY + this.acelerationY, 0.03) : this.velocityY = Math.min(this.velocityY + this.acelerationY, -0.03);
-            if (Math.abs(this.position[1] - this.cruiseHeight) < 0.001){
-                this.position[1] = this.cruiseHeight;
-                this.isOff = true;
-                this.takingOff = false;
+            if (Math.abs(this.position[1] - (this.cruiseHeight+this.helipadPos[1])) < 0.001){
+                this.position[1] = (this.cruiseHeight+this.helipadPos[1]);
+                if (this.cruiseHeight != 0) {
+                    this.isOff = true;
+                    this.takingOff = false;
+                }
+                this.breaking = false;
+                this.baseFlyingHeight = this.helipadPos[1] + this.cruiseHeight;
             }
+        }
+    }
+
+    stayOnHelipad(helipadPos){
+        if (!(this.isOff || this.takingOff)) {
+            this.position = vec3.clone(helipadPos);
+            this.position[1] += 1.65 * this.heliScale[1];
+            this.baseFlyingHeight = this.helipadPos[1] + this.cruiseHeight;
+        }
+        this.helipadPos = vec3.clone(helipadPos);
+        this.helipadPos[1] += 1.65 * this.heliScale[1];
+        this.handleLpress();
+        this.handleLpress();
+    }
+
+    handleLpress(){
+        if (this.parking_step != 5) {
+            this.parking = !this.parking
+            this.parkingStep = 0;
+            this.dir = [0, 0];
+            this.turnInput = 0;
+        }
+    }
+
+    park(timeDelta) {
+        switch (this.parkingStep){
+            case 0: //STABILIZE
+                if (this.heliIsStabilized()){
+                    this.parkingStep = 1;
+                }
+                break;
+            case 1: //ROTATE
+                if (!this.pointingToHelipad || !this.heliIsStabilized()){
+                    this.rotateToHelipad(timeDelta);
+                } else {
+                    this.turnInput = 0;
+                    this.parkingStep = 2;
+                    this.pointingToHelipad = false;
+                }
+                break;
+            case 2: //ADJUST HEIGHT
+                if (this.counter == 0) {
+                    this.takingOff = true;
+                    this.isOff = false
+                    this.cruiseHeight = 30;
+                    this.counter += 1;
+                }
+                if (!this.takingOff){
+                    this.parkingStep = 3;
+                    this.counter = 0;
+                }
+                break;
+            case 3: //GOTO HELIPAD
+                if (!this.aboveHelipad || !this.heliIsStabilized()){
+                    this.moveToHelipad(timeDelta);
+                } else {
+                    this.dir = [0,0];
+                    this.parkingStep = 4;
+                    this.aboveHelipad = false;
+                }
+                break;
+            case 4: //ROTATE AGAIN
+                if (!(this.rotation == Math.PI)){
+                    this.rotateToHelipad(timeDelta, true)
+                } else {
+                    this.turnInput = 0;
+                    this.parkingStep = 5;
+                    this.pointingToHelipad = false;
+                }
+                break;
+            case 5: //PARK
+                if (this.counter == 0) {
+                    this.takingOff = true;
+                    this.isOff = false
+                    this.cruiseHeight = 0;
+                    this.counter += 1;
+                }
+                this.turn(this.turnInput, timeDelta);
+                if (this.topRotorAngleSpeed == 0){
+                    this.parking = false;
+                    this.parked = true;
+
+                    this.velocityY = 0;
+                    this.acelerationY = 0;
+                    this.descending = false;
+                    this.breaking = false;
+
+                    this.isOff = false;
+                    this.takingOff = false;
+                    this.cruiseHeight = 30; //TOASK
+                    this.counter = 0;
+                }
+                break;
+            default:
+                console.log("parking step not recognized: ", this.parkingStep);
+                break;
+        }
+    }
+
+    heliIsStabilized(){
+        return ((this.velocity[0] == 0) && (this.velocity[2] == 0) && (this.rotationSpeed == 0));
+    }
+
+    rotateToHelipad(timeDelta, origin=false) {
+        const dx = this.helipadPos[0] - this.position[0];
+        const dz = this.helipadPos[2] - this.position[2]
+        const targetYaw = origin ? Math.PI : Math.atan2(dx, dz);
+
+        let delta = targetYaw - this.rotation;
+        delta = ((delta + Math.PI) % (2*Math.PI) + 2*Math.PI) % (2*Math.PI) - Math.PI;
+
+        const accelRate = this.motorPower / 2000;
+        const alpha = accelRate / 600;
+
+        const brakeDist  = (this.rotationSpeed * this.rotationSpeed) / (2 * alpha);
+
+        if (Math.abs(delta) > brakeDist) {
+            this.turnInput = delta > 0 ?  1 : -1;
+        } else {
+            this.turnInput = 0;
+        }
+
+        this.turn(this.turnInput, timeDelta);
+
+        const ANGLE_TOL = 0.005;
+        const SPEED_TOL = 0.0001;
+        if (Math.abs(delta) < ANGLE_TOL && Math.abs(this.rotationSpeed) < SPEED_TOL) {
+            this.rotation = targetYaw;
+            this.rotationSpeed = 0;
+            this.pointingToHelipad = true;
+            this.turnInput = 0;
+        }
+    }
+
+    moveToHelipad(timeDelta) {
+        const dx = this.helipadPos[0] - this.position[0];
+        const dz = this.helipadPos[2] - this.position[2];
+        const dist = Math.hypot(dx, dz);
+
+        const speed = Math.hypot(this.velocity[0], this.velocity[2]);
+
+        const decelRate = (Math.abs(this.brake) / 1000);
+        const brakeDist = (speed * speed / (2 * decelRate));
+
+        if (dist > brakeDist) {
+            this.dir = [0, 1];
+        } else {
+            this.dir = [0, 0];
+        }
+
+        this.accelerate(this.dir, timeDelta);
+
+        const POS_TOL = 0.1; 
+        if (dist < POS_TOL) {
+            this.position[0] = this.helipadPos[0];
+            this.position[2] = this.helipadPos[2];
+            this.velocity[0] = 0;
+            this.velocity[2] = 0;
+            this.dir = [0, 0];
+            this.parkingStep = 4;
         }
     }
 }

@@ -13,7 +13,7 @@ export class MyPanorama extends CGFobject {
         
         this.material = new CGFappearance(scene);
         this.material.setAmbient(0.2, 0.2, 0.2, 1);
-        this.material.setDiffuse(1, 1, 1, 1);
+        this.material.setDiffuse(0, 0, 0, 1);
         this.material.setSpecular(0, 0, 0, 1);
         this.material.setEmission(1, 1, 1, 1);
         this.material.setTexture(this.texture);
@@ -23,8 +23,8 @@ export class MyPanorama extends CGFobject {
 
         this.light = scene.lights[0];
         this.light.setAmbient (0,0,0,1);
-        this.light.setDiffuse (4,4,4,1);
-        this.light.setSpecular(4,4,4,1);
+        this.light.setDiffuse (1,1,1,1);
+        this.light.setSpecular(1,1,1,1);
         this.light.enable();
     }
 

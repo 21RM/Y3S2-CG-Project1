@@ -89,4 +89,13 @@ export class MyCylinder extends CGFobject {
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
     }
+
+    display() {
+        const gl = this.scene.gl;
+        gl.enable(gl.BLEND);
+        gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+        super.display();
+        gl.disable(gl.BLEND);
+    }    
+
 }
