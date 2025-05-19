@@ -5,6 +5,7 @@ import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
 import { MyGrass } from './MyGrass.js';
+import { MyForest } from './MyForest.js';
 
 /**
  * MyScene
@@ -41,6 +42,14 @@ export class MyScene extends CGFscene {
     this.heliPosition = vec3.fromValues(0, 0, 0);
     this.heliVelocity = vec3.fromValues(0, 0, 0);
     this.heli = new MyHeli(this, this.heliPosition, 0, this.heliVelocity);
+    this.displayForest = true;
+    this.forestRows    = 4;    // default grid
+    this.forestCols    = 5;
+    this.forestWidth   = 300;  // cover a 300×300 area
+    this.forestDepth   = 300;
+    this.forest = new MyForest(this, this.forestRows, this.forestCols,
+                               this.forestWidth, this.forestDepth);  
+
     const glassTex = new CGFtexture(this, 'textures/cockpitGlass.png');
     this.cockpitGlass = new MyCockpitGlass(this, glassTex);
     this.heli = new MyHeli(this);
@@ -93,7 +102,8 @@ export class MyScene extends CGFscene {
       );
     };
     // ------------------------------------------------------------- //
-
+    // Geração de floresta
+    
   }
   initLights() {
     this.lights[0].setPosition(200, 200, 200, 1);
@@ -224,6 +234,9 @@ export class MyScene extends CGFscene {
     if (this.followHeli1P) {
       this.cockpitGlass.display();
     }
+
+    // draw trees
+    if (this.displayForest) this.forest.display();
 
   }
 }

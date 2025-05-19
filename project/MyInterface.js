@@ -86,8 +86,12 @@ export class MyInterface extends CGFinterface {
             skySphereFolder.add(this.scene,"panoramaTextureKey",Object.keys(this.scene.panoramaTextures)).name("Texture"); // change texture
             skySphereFolder.add(this.scene, "panoramaFollowCamera").name("Follow Camera"); // follow camera
             // -----------
+        let forestFolder = sceneElementsFolder.addFolder("Forest");
+            // Forest controls
+            forestFolder.add(this.scene, 'displayForest').name('Show Forest');
+            
     //----------------------
-
+    
     heliModeCtrl.onChange((enabled) => {
       heliControlFolder.domElement.style.display = enabled ? "" : "none";
     });
