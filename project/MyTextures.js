@@ -155,6 +155,16 @@ export class TextureManager {
     this.scene.leaf3TopAppearance.setShininess(10);
     this.scene.leaf3TopAppearance.loadTexture('textures/leafs_3_top.png');
     this.scene.leaf3TopAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.treeShadowTex = new CGFtexture(this.scene, 'textures/treeShadow.png');
+    this.scene.treeShadowAppr = new CGFappearance(this.scene);
+    this.scene.treeShadowAppr.setAmbient(0.9, 0.9, 0.9, 1);
+    this.scene.treeShadowAppr.setDiffuse(0.1, 0.1, 0.1, 1);  
+    this.scene.treeShadowAppr.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.treeShadowAppr.setShininess(10);
+    this.scene.treeShadowAppr.loadTexture('textures/treeShadow.png');
+    this.scene.treeShadowAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
     // --------------------------------------- //
   }
 }
