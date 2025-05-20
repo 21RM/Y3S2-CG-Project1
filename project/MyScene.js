@@ -5,6 +5,7 @@ import { MyHeli } from "./MyHeli.js";
 import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
 import { MyGrass } from './MyGrass.js';
+import { MyForest } from './MyForest.js';
 import { TextureManager } from './MyTextures.js';
 
 /**
@@ -52,8 +53,9 @@ export class MyScene extends CGFscene {
     // building related
     this.buildingPos = vec3.fromValues(0, 0, 130);
     this.buildingScale = vec3.fromValues(0.5, 0.5, 0.5)
-   
-    
+    //Forest related
+    this.forestCount         = 170;     
+    this.forestSemiRadius      = 170;
 
     //------- Variables connnected to myInterface -------//
     // AXIS
@@ -83,6 +85,8 @@ export class MyScene extends CGFscene {
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
+    //forest
+    this.displayForest = true;
     //---------------------------------------------------//
 
     // -------- Objects that depend on interface variables --------- //
@@ -103,7 +107,21 @@ export class MyScene extends CGFscene {
       this.heli.stayOnHelipad(this.building.helipadPos);
     };
     // ------------------------------------------------------------- //
-
+    // Geração de floresta
+    this.updateForest = () => {
+      this.forest = new MyForest(this,
+        this.forestCount,
+        1,1,1,
+        {
+          useSemiCircle:   true,
+          semiRadius:   this.forestSemiRadius ,
+          semiCenter:      [-15, -10],
+          semiRotationDeg: 115,
+        }
+      );
+    };
+    this.updateForest();
+    
   }
   initLights() {
     this.lights[0].setPosition(200, 200, 200, 0);
@@ -241,6 +259,13 @@ export class MyScene extends CGFscene {
     if (this.followHeli1P) {
       this.cockpitGlass.display();
     }
+    
+    // draw trees
+    if (this.displayForest) {
+      this.pushMatrix();
+      this.forest.display();
+      this.popMatrix();
+      }
 
   }
 }

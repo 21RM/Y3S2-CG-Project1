@@ -96,5 +96,75 @@ export class TextureManager {
         this.scene.windowTex5 = new CGFtexture(this.scene, 'textures/window_sky_last.png');
         this.scene.windowTex6 = new CGFtexture(this.scene, 'textures/window_sky_last.png');
     // --------------------------------------- //
+
+    // -------------- MyTree --------------- //
+    // Trunk
+    this.scene.trunkAppearance = new CGFappearance(this.scene);
+    this.scene.trunkAppearance.setAmbient(0.1, 0.1, 0.1, 1);
+    this.scene.trunkAppearance.setDiffuse(0.6, 0.6, 0, 6);
+    this.scene.trunkAppearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.trunkAppearance.setShininess(10);
+    this.scene.trunkAppearance.loadTexture('textures/trunk.png');
+    this.scene.trunkAppearance.setTextureWrap('REPEAT','REPEAT');
+
+    // Foliage
+    this.scene.leafAppearance = new CGFappearance(this.scene);
+    this.scene.leafAppearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leafAppearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leafAppearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leafAppearance.setShininess(10);
+    this.scene.leafAppearance.loadTexture('textures/leafs.png');
+    this.scene.leafAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.leafTopAppearance = new CGFappearance(this.scene);
+    this.scene.leafTopAppearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leafTopAppearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leafTopAppearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leafTopAppearance.setShininess(10);
+    this.scene.leafTopAppearance.loadTexture('textures/leafs_top.png');
+    this.scene.leafTopAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.leaf2Appearance = new CGFappearance(this.scene);
+    this.scene.leaf2Appearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leaf2Appearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leaf2Appearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leaf2Appearance.setShininess(10);
+    this.scene.leaf2Appearance.loadTexture('textures/leafs_2.png');
+    this.scene.leaf2Appearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.leaf2TopAppearance = new CGFappearance(this.scene);
+    this.scene.leaf2TopAppearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leaf2TopAppearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leaf2TopAppearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leaf2TopAppearance.setShininess(10);
+    this.scene.leaf2TopAppearance.loadTexture('textures/leafs_2_top.png');
+    this.scene.leaf2TopAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.leaf3Appearance = new CGFappearance(this.scene);
+    this.scene.leaf3Appearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leaf3Appearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leaf3Appearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leaf3Appearance.setShininess(10);
+    this.scene.leaf3Appearance.loadTexture('textures/leafs_3.png');
+    this.scene.leaf3Appearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.leaf3TopAppearance = new CGFappearance(this.scene);
+    this.scene.leaf3TopAppearance.setAmbient (0.1, 0.1, 0.1, 1);
+    this.scene.leaf3TopAppearance.setDiffuse (0.5,0.5,0.5,1);
+    this.scene.leaf3TopAppearance.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.leaf3TopAppearance.setShininess(10);
+    this.scene.leaf3TopAppearance.loadTexture('textures/leafs_3_top.png');
+    this.scene.leaf3TopAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    this.scene.treeShadowTex = new CGFtexture(this.scene, 'textures/treeShadow.png');
+    this.scene.treeShadowAppr = new CGFappearance(this.scene);
+    this.scene.treeShadowAppr.setAmbient(0.9, 0.9, 0.9, 1);
+    this.scene.treeShadowAppr.setDiffuse(0.1, 0.1, 0.1, 1);  
+    this.scene.treeShadowAppr.setSpecular(0.1, 0.1, 0.1, 1);
+    this.scene.treeShadowAppr.setShininess(10);
+    this.scene.treeShadowAppr.loadTexture('textures/treeShadow.png');
+    this.scene.treeShadowAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+    // --------------------------------------- //
   }
 }
