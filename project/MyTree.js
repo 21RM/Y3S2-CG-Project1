@@ -63,7 +63,7 @@ export class MyTree extends CGFobject {
       trunkStacks
     );
 
-    this.shadowPlane = new MyQuad(scene, this.scene.treeShadowTex, this.scene.treeShadowAppr);
+    this.shadowPlane = new MyQuad(scene, 1, this.scene.treeShadowTex, this.scene.treeShadowAppr);
 
     // compute radii for each foliage layer
     this.radii = [];
@@ -105,10 +105,10 @@ export class MyTree extends CGFobject {
 
     this.scene.pushMatrix();
 
-    const factor0   = Math.sqrt(1 / this.layers);
-    const angle0    = this.inclRad * factor0 * this.inclinationScale;
+    const factor0 = Math.sqrt(1 / this.layers);
+    const angle0 = this.inclRad * factor0 * this.inclinationScale;
     if (this.tiltX) this.scene.rotate(angle0, 1, 0, 0);
-    else            this.scene.rotate(angle0, 0, 0, 1);
+    else this.scene.rotate(angle0, 0, 0, 1);
 
     this.trunkMat.apply();
     this.trunk.display();

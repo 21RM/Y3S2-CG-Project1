@@ -585,6 +585,9 @@ export class MyHeli extends CGFobject {
                 this.position[1] = Math.min(this.position[1] + this.velocityY, this.helipadPos[1] + this.cruiseHeight);
             }
         }
+        if (this.parked) {
+            this.turn(0, timeDelta);
+        }
 
         this.topRotorAngle += this.topRotorAngleSpeed % (2*Math.PI);
         this.tailRotorAngle += this.tailRotorAngleSpeed % (2*Math.PI);
@@ -722,7 +725,7 @@ export class MyHeli extends CGFobject {
     }
 
     stayOnHelipad(helipadPos){
-        if (!(this.isOff || this.takingOff)) {
+        if (!(this.isOff || this.takingOff) || this.parked) {
             this.position = vec3.clone(helipadPos);
             this.position[1] += 1.65 * this.heliScale[1];
             this.baseFlyingHeight = this.helipadPos[1] + this.cruiseHeight;
@@ -750,7 +753,7 @@ export class MyHeli extends CGFobject {
                 }
                 break;
             case 1: //ROTATE
-                if (!this.pointingToHelipad || !this.heliIsStabilized()){
+                if ((!this.pointingToHelipad || !this.heliIsStabilized()) && !this.parked){
                     this.rotateToHelipad(timeDelta);
                 } else {
                     this.turnInput = 0;
@@ -796,6 +799,9 @@ export class MyHeli extends CGFobject {
                     this.counter += 1;
                 }
                 this.turn(this.turnInput, timeDelta);
+                if (this.velocityY <= 0.5){
+                    this.parked = true;
+                }
                 if (this.topRotorAngleSpeed == 0){
                     this.parking = false;
                     this.parked = true;
@@ -807,12 +813,11 @@ export class MyHeli extends CGFobject {
 
                     this.isOff = false;
                     this.takingOff = false;
-                    this.cruiseHeight = 30; //TOASK
+                    this.cruiseHeight = 30;
                     this.counter = 0;
                 }
                 break;
             default:
-                console.log("parking step not recognized: ", this.parkingStep);
                 break;
         }
     }

@@ -67,7 +67,7 @@ export class MyBuilding extends CGFobject {
         this.doorFrameSide = new MyPrismSolid(scene, [1, 0.8], [1, 0.8], 20);
         this.sign = new MyPrismSolid(scene, [25, 1], [25, 1], 6);
 
-        this.helipadPlane = new MyQuad(scene, null, this.scene.helipadAppr);
+        this.helipadPlane = new MyQuad(scene, 1, null, this.scene.helipadAppr);
     }
 
     display() {

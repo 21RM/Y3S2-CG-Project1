@@ -46,6 +46,7 @@ export class MyInterface extends CGFinterface {
           this.scene.heli.breaking = false;
           this.scene.heli.dir = [0, 0];
         });
+        cruiseCtrl.listen();
         heliControlFolder.add(this.scene.heli, "motorPower", 0.1, 3) .name("Motor Power"); // helicopter aceleration
         heliControlFolder.add(this.scene.heli, "maxSpeed", 0.01, 0.10) .name("Max Speed"); // helicopter aceleration
 

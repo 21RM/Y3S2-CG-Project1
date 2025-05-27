@@ -31,7 +31,7 @@ export class MyWindow extends CGFobject {
         this.glassAppearance.setTexture(tex);
         this.glassAppearance.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
 
-        this.glass = new MyQuad(scene, tex, this.glassAppearance);
+        this.glass = new MyQuad(scene, 1, tex, this.glassAppearance);
     }
 
     display() {

@@ -10,12 +10,16 @@ export class MyCylinder extends CGFobject {
      * @param {number} slices - Number of radial divisions. 
      * @param {number} stacks - Number of vertical divisions. 
      */ 
-    constructor(scene, height = 1.0, bottomRadius = 1.0, topRadius = 1.0, slices = 20, stacks = 1) { 
+    constructor(scene, height = 1.0, bottomRadius = 1.0, topRadius = 1.0, slices = 20, stacks = 1, invert = false, hide_tb = false, uRepeat = 1, vRepeat = 1) { 
         super(scene); 
         this.height = height; 
         this.bottomRadius = bottomRadius; 
         this.topRadius = topRadius; 
-        this.slices = slices; this.stacks = stacks; 
+        this.slices = slices; this.stacks = stacks;
+        this.invert = invert; 
+        this.hide_tb = hide_tb;
+        this.uRepeat = uRepeat;
+        this.vRepeat = vRepeat;
         this.initBuffers(); 
     }
 
@@ -24,6 +28,8 @@ export class MyCylinder extends CGFobject {
         this.indices = [];
         this.normals = [];
         this.texCoords = [];
+
+        const invSign = this.invert ? -1 : 1;
         
         const dr = this.topRadius - this.bottomRadius;
 
@@ -49,7 +55,7 @@ export class MyCylinder extends CGFobject {
                 let nz = (this.height * sinTheta) / normFactor;
                 this.normals.push(nx, ny, nz);
                 
-                this.texCoords.push(u, v);
+                this.texCoords.push(u * this.uRepeat, v * this.vRepeat)
             }
         }
         
@@ -57,32 +63,46 @@ export class MyCylinder extends CGFobject {
             for (let j = 0; j < this.slices; j++) {
                 let first = i * (this.slices + 1) + j;
                 let second = (i + 1) * (this.slices + 1) + j;
-                this.indices.push(first, second, first + 1);
-                this.indices.push(first + 1, second, second + 1);
+                if (!this.invert) {
+                    this.indices.push(first, second, first + 1);
+                    this.indices.push(first + 1, second, second + 1);
+                } else {
+                    this.indices.push(first, first + 1, second);
+                    this.indices.push(first + 1, second + 1, second);
+                }
             }
         }
         
-        if (this.bottomRadius > 0) {
+        if (!this.hide_tb && this.bottomRadius > 0) {
             const baseCenterIndex = this.vertices.length / 3;
             this.vertices.push(0, 0, 0);
-            this.normals.push(0, -1, 0);
+            this.normals.push(0, -1 * invSign, 0);
             this.texCoords.push(0.5, 0.5);
-            
-
             for (let j = 0; j < this.slices; j++) {
-                this.indices.push(j, j + 1, baseCenterIndex);
+                const idx0 = j;
+                const idx1 = j + 1;
+                if (!this.invert) {
+                    this.indices.push(idx0, idx1, baseCenterIndex);
+                } else {
+                    this.indices.push(idx1, idx0, baseCenterIndex);
+                }
             }
         }
         
-        if (this.topRadius > 0) {
+        if (!this.hide_tb && this.topRadius > 0) {
             const topCenterIndex = this.vertices.length / 3;
             this.vertices.push(0, this.height, 0);
-            this.normals.push(0, 1, 0);
+            this.normals.push(0, 1 * invSign, 0);
             this.texCoords.push(0.5, 0.5);
-            
-            let start = this.stacks * (this.slices + 1);
+            const start = this.stacks * (this.slices + 1);
             for (let j = 0; j < this.slices; j++) {
-                this.indices.push(start + j + 1, start + j, topCenterIndex);
+                const idx0 = start + j;
+                const idx1 = start + j + 1;
+                if (!this.invert) {
+                    this.indices.push(idx1, idx0, topCenterIndex);
+                } else {
+                    this.indices.push(idx0, idx1, topCenterIndex);
+                }
             }
         }
         

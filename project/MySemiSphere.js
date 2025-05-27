@@ -10,13 +10,15 @@ export class MySemiSphere extends CGFobject {
      * @param {number} noseFactor - Factor by which to elongate the "nose" (front) of the dome. Use values > 1 for elongation.
      * @param {number} noseOffset - Vertical offset for the nose. 
      */
-    constructor(scene, radius = 1.0, stacks = 10, slices = 20, noseFactor = 1, noseOffset = 0) {
+    constructor(scene, radius = 1.0, stacks = 10, slices = 20, noseFactor = 1, noseOffset = 0, closed = true, invert = false) {
         super(scene);
         this.radius = radius;
         this.stacks = stacks;
         this.slices = slices;
         this.noseFactor = noseFactor
         this.noseOffset = noseOffset;
+        this.closed = closed;
+        this.invertFaces = invert;
         this.initBuffers();
     }
 
@@ -51,7 +53,10 @@ export class MySemiSphere extends CGFobject {
                 let ny = cosTheta;
                 let nz = sinTheta * sinPhi;
                 let len = Math.sqrt(nx * nx + ny * ny + nz * nz);
-                this.normals.push(nx / len, ny / len, nz / len);
+                if (this.invertFaces)
+                    this.normals.push(-nx / len, -ny / len, -nz / len);
+                else
+                    this.normals.push(nx / len, ny / len, nz / len);
 
                 let u = j / this.slices;
                 let v = i / this.stacks;
@@ -63,21 +68,28 @@ export class MySemiSphere extends CGFobject {
             for (let j = 0; j < this.slices; j++) {
                 let first = i * (this.slices + 1) + j;
                 let second = first + this.slices + 1;
-                this.indices.push(first + 1, second, first);
-                this.indices.push(first + 1, second + 1, second);
+                if (this.invertFaces) {
+                    this.indices.push(first, second, first + 1);
+                    this.indices.push(second, second + 1, first + 1);
+                } else {
+                    this.indices.push(first, first + 1, second);
+                    this.indices.push(second, first + 1, second + 1);
+                }
             }
         }
 
         // --- Adding Bottom Cap --- //
-        let bottomStart = this.stacks * (this.slices + 1);
-        let centerIndex = this.vertices.length / 3;
-        this.vertices.push(0, 0, 0);
-        this.normals.push(0, -1, 0);
-        this.texCoords.push(0.5, 0.5);
-        for (let j = 0; j < this.slices; j++) {
-            this.indices.push(centerIndex, bottomStart + j, bottomStart + j + 1);
+        if (this.closed) {
+            let bottomStart = this.stacks * (this.slices + 1);
+            let centerIndex = this.vertices.length / 3;
+            this.vertices.push(0, 0, 0);
+            this.normals.push(0, -1, 0);
+            this.texCoords.push(0.5, 0.5);
+            for (let j = 0; j < this.slices; j++) {
+                this.indices.push(centerIndex, bottomStart + j, bottomStart + j + 1);
+            }
+            this.indices.push(centerIndex, bottomStart + this.slices, bottomStart);
         }
-        this.indices.push(centerIndex, bottomStart + this.slices, bottomStart);
 
         this.primitiveType = this.scene.gl.TRIANGLES;
         this.initGLBuffers();
