@@ -22,8 +22,11 @@ export class MyTree extends CGFobject {
   } = {}) {
     super(scene);
 
-    // store full tree height
-    this.treeHeight       = treeHeight;
+    // Tree parameters
+    this.trunkRadius  = trunkRadius;
+    this.treeHeight   = treeHeight;
+    this.foliageColor = foliageColor;
+    
     // determine foliage tier count by height
     const SMALL_THRESHOLD  = 30;
     const MEDIUM_THRESHOLD = 45;
@@ -35,6 +38,9 @@ export class MyTree extends CGFobject {
     this.inclRad          = inclinationDeg * Math.PI/180;
     this.tiltX            = (inclineAxis === 'X');
     this.inclinationScale = inclinationScale;
+    this.inclinationDeg   = inclinationDeg;
+    this.inclineAxis      = inclineAxis;
+  
 
     // split heights
     this.trunkHeight      = this.treeHeight * 0.5;
@@ -52,6 +58,7 @@ export class MyTree extends CGFobject {
     this.topfoliage2Mat = scene.leaf2TopAppearance;
     this.foliage3Mat = scene.leaf3Appearance;
     this.topfoliage3Mat = scene.leaf3TopAppearance;
+    
     
     // trunk geometry
     this.trunk = new MyCylinder(
@@ -75,6 +82,7 @@ export class MyTree extends CGFobject {
     }
 
     // build crown cylinders
+    let foliageTotalH = 0;
     this.crowns = [];
     const layerH = this.crownHeight / this.layers;
     for (let i = 0; i < this.layers; i++) {
@@ -89,7 +97,12 @@ export class MyTree extends CGFobject {
       const cyl = new MyCylinder(scene, layerH, bottomR, topR, slices, crownStacks);
       cyl.height = layerH;
       this.crowns.push(cyl);
+      foliageTotalH += layerH;
     }
+    
+    this.totalHeight = this.trunkHeight + foliageTotalH;
+    this.canopyRadius = this.radii[this.radii.length - 1];
+
   }
 
   display() {

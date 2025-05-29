@@ -87,6 +87,12 @@ export class MyScene extends CGFscene {
     this.buildingWindowsPerFloor = 3;
     //forest
     this.displayForest = true;
+    //fire
+    this.displayFire = true;
+    this.fireProbability = 0.5; 
+    this.fireInstances = 1;
+    this.fireScale     = 1.0;
+
     //---------------------------------------------------//
 
     // -------- Objects that depend on interface variables --------- //
@@ -117,6 +123,9 @@ export class MyScene extends CGFscene {
           semiRadius:   this.forestSemiRadius ,
           semiCenter:      [-15, -10],
           semiRotationDeg: 115,
+          fireProbability: this.fireProbability,
+          fireInstances: this.fireInstances,
+          fireScale: this.fireScale
         }
       );
     };
@@ -145,6 +154,9 @@ export class MyScene extends CGFscene {
 
     this.heli.update(delta);
     this.grass.update(delta);
+
+    if (this.forest && typeof this.forest.update === 'function')
+      this.forest.update(delta);
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
@@ -263,7 +275,7 @@ export class MyScene extends CGFscene {
     // draw trees
     if (this.displayForest) {
       this.pushMatrix();
-      this.forest.display();
+      this.forest.display(this.displayFire);
       this.popMatrix();
       }
 
