@@ -49,7 +49,7 @@ export class MyPanorama extends CGFobject {
             this.scene.translate(pos[0], pos[1], pos[2]);
         }
 
-        this.scene.translate(0, 25, 0);
+        this.scene.translate(0, 20, 0);
 
         this.scene.scale(this.scene.panoramaScale, this.scene.panoramaScale, this.scene.panoramaScale);
 

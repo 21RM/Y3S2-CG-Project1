@@ -1,5 +1,5 @@
 #ifdef GL_ES
-precision highp float;
+precision mediump float;
 #endif
 
 
@@ -39,11 +39,7 @@ void main() {
     float s = sin(aRotation);
     pos = vec3(c*pos.x + s*pos.z, pos.y, -s*pos.x + c*pos.z);
 
-    /* 3 – wind sway (depends on height so only blade tip moves)  */
-    float sway = (sin(time + pos.y * 12.0) * 0.1 )* pos.y;
-    pos.x += sway;
-
-    /* 4 – translate to world position */
+    /* 3 – translate to world position */
     pos += aOffset;
 
     vHeight = clamp(aVertexPosition.y, 0.0, 1.0);

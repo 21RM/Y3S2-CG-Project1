@@ -8,7 +8,7 @@ export class MyCockpitGlass extends CGFobject {
         this.scene = scene;
         this.glassTexture = glassTexture;
 
-        this.quad = new MyQuad(this.scene, this.glassTexture);
+        this.quad = new MyQuad(this.scene, 1, this.glassTexture);
     }
 
     display() {      

@@ -1,4 +1,4 @@
-import {CGFobject, CGFappearance} from '../lib/CGF.js';
+import {CGFobject, CGFappearance, CGFshader} from '../lib/CGF.js';
 /**
 * MyPlane
 * @constructor
@@ -34,6 +34,13 @@ export class MyPlane extends CGFobject {
 		this.material.setTextureWrap('MIRRORED_REPEAT', 'REPEAT');
 		this.material.setShininess(10);
 
+		this.groundShaders = new CGFshader(this.scene.gl, 'shaders/ground.vert', 'shaders/ground.frag');
+		this.groundShaders.setUniformsValues({
+			uLakeCenter: [0.35, 0.2],
+			uLakeRadius: 0.2,
+			uSampler : 0
+		});
+
 		this.initBuffers();
 	}
 	initBuffers() {
@@ -51,15 +58,9 @@ export class MyPlane extends CGFobject {
 				const du = repeats / this.nrDivs;
 				const dv = repeats / this.nrDivs;
 
-				this.texCoords = [];
-
-				for (let j = 0; j <= this.nrDivs; j++) {
-					for (let i = 0; i <= this.nrDivs; i++) {
-						this.texCoords.push(i * du, j * dv);
-					}
-				}
+				this.texCoords.push(i * du, j * dv);
 				xCoord += this.patchLength;
-			}
+			}	
 			yCoord -= this.patchLength;
 		}
 		// Generating indices
@@ -91,8 +92,21 @@ export class MyPlane extends CGFobject {
 	};
 
 	display() {
+		const gl = this.scene.gl;
+
+		if(!this.scene.frSaver){
+			this.scene.setActiveShader(this.groundShaders);
+		}
+
+		gl.enable(gl.BLEND);
+    	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		this.material.apply();
 		super.display();
+		gl.disable(gl.BLEND);
+
+		if(!this.scene.frSaver){
+			this.scene.setActiveShader(this.scene.defaultShader);
+		}
 	}
 
 }

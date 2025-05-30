@@ -6,6 +6,7 @@ import { MyCockpitGlass } from "./MyCockpitGlass.js";
 import { MyBuilding } from './MyBuilding.js';
 import { MyGrass } from './MyGrass.js';
 import { MyForest } from './MyForest.js';
+import { MyLake } from "./MyLake.js";
 import { TextureManager } from './MyTextures.js';
 
 /**
@@ -40,7 +41,7 @@ export class MyScene extends CGFscene {
 
     //-------- Initialize scene objects and variables ------------//
     this.axis = new CGFaxis(this, 20, 1);
-    this.ground = new MyPlane(this, 64, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.jpg'));
+    this.ground = new MyPlane(this, 1, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.png'));
     this.grass = new MyGrass(this);
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
@@ -54,10 +55,14 @@ export class MyScene extends CGFscene {
     this.buildingPos = vec3.fromValues(0, 0, 130);
     this.buildingScale = vec3.fromValues(0.5, 0.5, 0.5)
     //Forest related
-    this.forestCount         = 170;     
-    this.forestSemiRadius      = 170;
+    this.forestCount = 170;     
+    this.forestSemiRadius = 170;
+    //Lake related
+    this.lake = new MyLake(this);
 
     //------- Variables connnected to myInterface -------//
+    // ABSTRACT
+    this.frSaver = false;
     // AXIS
     this.displayAxis = false;
     // GROUND
@@ -85,8 +90,10 @@ export class MyScene extends CGFscene {
     // Parâmetros do edifício (controláveis via interface)
     this.buildingNumFloorsSide = 3;
     this.buildingWindowsPerFloor = 3;
-    //forest
+    // forest
     this.displayForest = true;
+    // Lake
+    this.displayLake = true;
     //---------------------------------------------------//
 
     // -------- Objects that depend on interface variables --------- //
@@ -127,7 +134,7 @@ export class MyScene extends CGFscene {
     this.lights[0].setPosition(200, 200, 200, 0);
     this.lights[0].setDiffuse(1.0, 1.0, 1.0, 1.0);
     this.lights[0].setSpecular(1.0, 1.0, 1.0, 1);
-    this.lights[0].setConstantAttenuation(0.2);  //TOASK  
+    this.lights[0].setConstantAttenuation(0.2);
     this.lights[0].enable();
     this.lights[0].update();
   }
@@ -145,6 +152,7 @@ export class MyScene extends CGFscene {
 
     this.heli.update(delta);
     this.grass.update(delta);
+    this.lake.update(delta);
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
@@ -218,15 +226,6 @@ export class MyScene extends CGFscene {
     }
 
     this.setDefaultAppearance();
-
-    // Draw ground
-    if (this.displayGround) {
-      this.pushMatrix();
-      this.scale(this.groundScale, 1, this.groundScale);
-      this.rotate(-Math.PI / 2, 1, 0, 0);
-      this.ground.display();
-      this.popMatrix();
-    }
     
     if (this.displayGrass) {
       this.pushMatrix();
@@ -238,6 +237,19 @@ export class MyScene extends CGFscene {
     if (this.displayPanorama) {
       this.panorama.texture = this.panoramaTextures[this.panoramaTextureKey];
       this.panorama.display();
+    }
+
+    // Draw ground
+    if (this.displayGround) {
+      this.pushMatrix();
+      this.scale(this.groundScale, 1, this.groundScale);
+      this.rotate(-Math.PI / 2, 1, 0, 0);
+      this.ground.display();
+      this.popMatrix();
+    }
+
+    if (this.displayLake && !this.frSaver) {
+      this.lake.display();
     }
 
     if (this.displayBuilding) {
@@ -265,7 +277,7 @@ export class MyScene extends CGFscene {
       this.pushMatrix();
       this.forest.display();
       this.popMatrix();
-      }
+    }
 
   }
 }

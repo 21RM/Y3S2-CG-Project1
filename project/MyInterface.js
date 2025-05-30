@@ -17,6 +17,7 @@ export class MyInterface extends CGFinterface {
     // https://github.com/dataarts/dat.gui/blob/master/API.md
     this.gui = new dat.GUI();
 
+    const frSaver = this.gui.add(this.scene, "frSaver").name("Frame Rate Saver");
     const heliModeCtrl = this.gui.add(this.scene, "helicopterMode").name("Helicopter Mode"); // enable helicopter mode
     this.heliModeCtrl = heliModeCtrl;
 
@@ -40,14 +41,26 @@ export class MyInterface extends CGFinterface {
           }
         });
         const cruiseCtrl = heliControlFolder.add(this.scene.heli, "cruiseHeight", 20, 40).name("Cruise Height"); // helicopter cruise height
-        cruiseCtrl.onChange((newHeight) => {
-          this.scene.heli.isOff = false;
-          this.scene.heli.takingOff = true;
-          this.scene.heli.breaking = false;
-          this.scene.heli.dir = [0, 0];
-        });
+        cruiseCtrl.onChange((newHeight) => this.startTakeOff(newHeight));
+
+        this.startTakeOff = (cruiseHeight) => {
+          const heli = this.scene.heli;
+          heli.cruiseHeight = cruiseHeight;
+          heli.isOff = false;
+          heli.takingOff = true;
+          heli.breaking = false;
+          heli.dir = [0, 0];
+
+          if (heli.fillingWater) {
+            heli.fillingWater = false;
+            heli.rampingUp = false;
+            heli.hasWater = true;
+          }
+        };
+
+        cruiseCtrl.listen();
         heliControlFolder.add(this.scene.heli, "motorPower", 0.1, 3) .name("Motor Power"); // helicopter aceleration
-        heliControlFolder.add(this.scene.heli, "maxSpeed", 0.01, 0.10) .name("Max Speed"); // helicopter aceleration
+        heliControlFolder.add(this.scene.heli, "maxSpeed", 0.005, 0.10) .name("Max Speed"); // helicopter aceleration
 
         heliControlFolder.domElement.style.display = "none";
 
@@ -69,6 +82,11 @@ export class MyInterface extends CGFinterface {
         let grassFolder = sceneElementsFolder.addFolder("Grass");
         // V //
           grassFolder.add(this.scene, "displayGrass").name("Show Grass")
+          // -----------
+        // Lake Folder
+        let lakeFolder = sceneElementsFolder.addFolder("Lake");
+        // V //
+          lakeFolder.add(this.scene, "displayLake").name("Show Lake")
           // -----------
         // Heli Folder
         let heliFolder = sceneElementsFolder.addFolder("Helicopter");
@@ -180,6 +198,9 @@ export class MyInterface extends CGFinterface {
           this.scene.heli.takingOff = true;
           this.scene.heli.parked = false;
         }
+        else if (this.scene.heli.fillingWater) {
+          this.startTakeOff(30);
+        }
       }
       if (event.code === "KeyC") {
         this.scene.helicopterMode = false;
@@ -187,9 +208,16 @@ export class MyInterface extends CGFinterface {
         this.heliModeCtrl.setValue(this.scene.helicopterMode);
       }
       if (event.code === "KeyL") {
-        if (!this.scene.heli.hasWater){
+        if (!this.scene.heli.hasWater && !this.scene.lake.is_above(this.scene.heli.position)){
           this.scene.heli.handleLpress();
         }
+        else if (!this.scene.heli.hasWater && this.scene.lake.is_above(this.scene.heli.position) && this.scene.heli.heliIsStabilized()) {
+          this.scene.heli.approachingWater = true;
+          this.scene.heli.cruiseHeight = -this.scene.heli.helipadPos[1];
+        }
+      }
+      if (event.code === "KeyR") {
+        this.scene.heli.reset();
       }
     } else {
       if (event.code === "KeyC") {
@@ -204,4 +232,6 @@ export class MyInterface extends CGFinterface {
     // returns true if a key is marked as pressed, false otherwise
     return this.activeKeys[keyCode] || false;
   }
+
+  
 }

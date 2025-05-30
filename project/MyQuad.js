@@ -9,8 +9,10 @@ import { CGFappearance } from '../lib/CGF.js';
  * @param material - (Optional) CGFappearance. If provided, used directly; otherwise a new appearance is created with the given texture.
  */
 export class MyQuad extends CGFobject {
-  constructor(scene, texture = null, material = null) {
+  constructor(scene, subdivisions = 1, texture = null, material = null) {
     super(scene);
+    this.subdivisions = subdivisions;
+
 
     if (material) {
       this.material = material;
@@ -30,31 +32,36 @@ export class MyQuad extends CGFobject {
   }
 
   initBuffers() {
-    this.vertices = [
-      -0.5, -0.5, 0,  // bottom-left
-       0.5, -0.5, 0,  // bottom-right
-       0.5,  0.5, 0,  // top-right
-      -0.5,  0.5, 0   // top-left
-    ];
+    const divs = this.subdivisions;
+    const step = 1.0 / divs;
 
-    this.normals = [
-      0, 0, 1,
-      0, 0, 1,
-      0, 0, 1,
-      0, 0, 1
-    ];
+    this.vertices = [];
+    this.normals  = [];
+    this.texCoords = [];
+    this.indices  = [];
 
-    this.texCoords = [
-      0, 0,
-      1, 0,
-      1, 1,
-      0, 1
-    ];
+    // Generate vertices, normals, and texture coordinates
+    for (let i = 0; i <= divs; i++) {
+      const y = -0.5 + step * i;
+      for (let j = 0; j <= divs; j++) {
+        const x = -0.5 + step * j;
+        this.vertices.push(x, y, 0);
+        this.normals.push(0, 0, 1);
+        this.texCoords.push(j / divs, i / divs);
+      }
+    }
 
-    this.indices = [
-      0, 1, 2,
-      0, 2, 3
-    ];
+    // Generate indices (two triangles per cell)
+    for (let i = 0; i < divs; i++) {
+      for (let j = 0; j < divs; j++) {
+        const idx = i * (divs + 1) + j;
+        const idxRight = idx + 1;
+        const idxBelow = idx + (divs + 1);
+        const idxBelowRight = idxBelow + 1;
+        this.indices.push(idx, idxRight, idxBelowRight);
+        this.indices.push(idx, idxBelowRight, idxBelow);
+      }
+    }
 
     this.primitiveType = this.scene.gl.TRIANGLES;
     this.initGLBuffers();
