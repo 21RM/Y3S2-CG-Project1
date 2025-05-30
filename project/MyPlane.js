@@ -94,7 +94,9 @@ export class MyPlane extends CGFobject {
 	display() {
 		const gl = this.scene.gl;
 
-		this.scene.setActiveShader(this.groundShaders);
+		if(!this.scene.frSaver){
+			this.scene.setActiveShader(this.groundShaders);
+		}
 
 		gl.enable(gl.BLEND);
     	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -102,7 +104,9 @@ export class MyPlane extends CGFobject {
 		super.display();
 		gl.disable(gl.BLEND);
 
-		this.scene.setActiveShader(this.scene.defaultShader);
+		if(!this.scene.frSaver){
+			this.scene.setActiveShader(this.scene.defaultShader);
+		}
 	}
 
 }

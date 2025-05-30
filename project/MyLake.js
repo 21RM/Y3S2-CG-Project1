@@ -10,6 +10,11 @@ export class MyLake extends CGFobject {
         
         this.time = 0;
 
+        this.positionX = 140;
+        this.positionZ = -80;
+
+        this.radius = 50;
+
         // BOWL
         this.bowl = new MySemiSphere(this.scene, 50, 30, 100, 1, 0, false, true);
 
@@ -57,7 +62,7 @@ export class MyLake extends CGFobject {
 
         // BOWL
         this.scene.pushMatrix();
-        this.scene.translate(140, -10, -80);
+        this.scene.translate(this.positionX, -10, this.positionZ);
         this.scene.rotate(Math.PI, 1, 0, 0);
         this.bowlAppearence.apply();
         this.bowl.display();
@@ -65,14 +70,14 @@ export class MyLake extends CGFobject {
 
         // SAND
         this.scene.pushMatrix();
-        this.scene.translate(140, -10, -80);
+        this.scene.translate(this.positionX, -10, this.positionZ);
         this.sandAppearence.apply();
         this.sand.display();
         this.scene.popMatrix();
 
         // WATER
         this.scene.pushMatrix();
-        this.scene.translate(140, -8, -80);
+        this.scene.translate(this.positionX, -8, this.positionZ);
         this.scene.rotate(-Math.PI/2, 1,0,0);
         this.scene.scale(150, 150, 1);
 
@@ -83,5 +88,11 @@ export class MyLake extends CGFobject {
         this.scene.setActiveShader(this.scene.defaultShader);
 
         this.scene.popMatrix();
+    }
+
+    is_above(position){
+        const dx = position[0] - this.positionX;
+        const dz = position[2] - this.positionZ;
+        return (dx*dx + dz*dz) <= (this.radius * this.radius);
     }
 }

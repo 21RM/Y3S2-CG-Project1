@@ -61,6 +61,8 @@ export class MyScene extends CGFscene {
     this.lake = new MyLake(this);
 
     //------- Variables connnected to myInterface -------//
+    // ABSTRACT
+    this.frSaver = false;
     // AXIS
     this.displayAxis = false;
     // GROUND
@@ -246,7 +248,7 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    if (this.displayLake) {
+    if (this.displayLake && !this.frSaver) {
       this.lake.display();
     }
 
