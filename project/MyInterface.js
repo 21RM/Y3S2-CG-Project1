@@ -113,6 +113,19 @@ export class MyInterface extends CGFinterface {
             forestFolder.add(this.scene, 'displayForest').name('Show Forest');
             forestFolder.add(this.scene, 'forestCount', 0, 300, 1).name('Tree Count').onChange(() => this.scene.updateForest());
             forestFolder.add(this.scene, 'forestSemiRadius', 0, 180, 1).name('Forest Radius').onChange(() => this.scene.updateForest());
+            forestFolder.add(this.scene, 'displayFire').name('Show Fire');
+            forestFolder.add(this.scene, 'fireProbability', 0, 1, 0.01).name('Fire Area').onChange((val) =>{
+              this.scene.forest.fireProbability = val;
+              this.scene.forest.applyFires();
+            });
+            forestFolder.add(this.scene, 'fireInstances', 1, 10, 1).name('Fires per Tree').onChange((val) => {
+              this.scene.forest.fireInstances = val;
+              this.scene.forest.applyFires();
+            });
+            forestFolder.add(this.scene, 'fireScale', 0.2, 2.0, 0.1).name('Fire Scale').onChange((val) => {
+              this.scene.forest.fireScale = val;
+              this.scene.forest.applyFires();
+            });
             
     //----------------------
     

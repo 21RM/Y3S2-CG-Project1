@@ -1,21 +1,9 @@
 import { CGFobject } from '../lib/CGF.js';
 import { MyTree } from './MyTree.js';
+import { MyFire} from './MyFire.js';
 
 export class MyForest extends CGFobject {
-  /**
-   * scene
-   * rows, cols       – grid dims (rows × cols = max tree count)
-   * width, depth     – footprint size (ignored in semicircle mode)
-   * options:
-   *   useSemiCircle        – boolean, spawn inside a semicircle
-   *   semiRadius           – radius of the semicircle
-   *   semiCenter           – [x,z] center of the flat side
-   *   semiRotationDeg      – direction of flat side (degrees)
-   *   position             – [x,y,z] offset for the entire forest (world coords)
-   *   treeScale            – global height multiplier for trees
-   *   collisionSpacing     – factor for min distance = (r1+r2)*collisionSpacing
-   *   maxPlacementAttempts – tries per tree before skipping
-   */
+ 
   constructor(scene, rows, cols, width, depth, options = {}) {
     super(scene);
     this.rows = rows;
@@ -37,8 +25,34 @@ export class MyForest extends CGFobject {
     this.collisionSpacing = options.collisionSpacing || 2;
     this.maxPlacementAttempts = options.maxPlacementAttempts || 10;
 
+    // fire parameters
+    this.fireProbability    = options.fireProbability     ?? 0.1;  // cluster radius factor
+    this.fireInstances      = options.fireInstances       ?? 1;    // fires per tree
+    this.fireScale          = options.fireScale           ?? 1.0;  // global size multiplier
+    this.fireHeightFactor   = options.fireHeightFactor    ?? 0.3;  // flame height relative to trunk
+    this.fireLayers         = options.fireLayers          ?? 5;    // cones per fire instance
+
+
+    // compute max cluster radius
+    if (this.useSemiCircle) {
+      this.maxFireRadius = this.semiRadius;
+      const r     = Math.sqrt(Math.random()) * this.semiRadius;
+      const theta = this.semiRotationRad + Math.random() * Math.PI;
+      this.fireCenter = [
+        this.semiCenter[0] + r * Math.cos(theta),
+        this.semiCenter[1] + r * Math.sin(theta)
+      ];
+    } else {
+      this.maxFireRadius = Math.sqrt(width*width + depth*depth) / 2;
+      this.fireCenter = [
+        (Math.random() - 0.5) * width   + this.position[0],
+        (Math.random() - 0.5) * depth   + this.position[2]
+      ];
+    }
+
     this.trees = [];
     this.generate();
+    this.applyFires();
   }
 
   generate() {
@@ -102,22 +116,113 @@ export class MyForest extends CGFobject {
         foliageColor: [0, green, 0]
       });
 
-      this.trees.push({ tree, x, z, trunkRadius: trunkR });
+      this.trees.push({ tree, x, z, trunkRadius: trunkR, fire: [] });
+    }
+    
+  }
+
+  applyFires() {
+    const radius = this.fireProbability * this.maxFireRadius;
+    for (const entry of this.trees) {
+      entry.fire = [];
+
+      // compute world position and distance to fire center
+      const worldX = entry.x + this.position[0];
+      const worldZ = entry.z + this.position[2];
+      const dx = worldX - this.fireCenter[0];
+      const dz = worldZ - this.fireCenter[1];
+
+      // within cluster? then possibly ignite
+      if (dx*dx + dz*dz <= radius*radius) {
+        for(let i=0; i < this.fireInstances; i++) {
+          const trunkH   = entry.tree.trunkHeight;
+          const trunkR   = entry.tree.trunkRadius;
+          const canopyR  = entry.tree.canopyRadius;
+          const eps  = 0.02;
+          const sizeScale = 0.3 + Math.random()* 0.05;
+          const sphereRadius = (trunkR * 1.8) * sizeScale;
+          const coneMaxHeight    = (trunkH * this.fireHeightFactor) * sizeScale*0.7;
+          const coneMaxBaseRadius= (sphereRadius * 0.4);
+
+          // attach fire at base of trunk
+          let fireX = worldX;
+          let fireZ = worldZ;
+          let fireY;
+
+          // use adjustable height factor and layers  
+          let baseR, height;
+
+          const zone = Math.floor(Math.random()*3);
+          const ang  = Math.random()*2*Math.PI;
+          const cosA = Math.cos(ang), sinA = Math.sin(ang)
+
+          switch(zone) {
+            case 0: // near ground, offset from trunk
+              fireX += (trunkR + eps)*cosA+ 2*Math.random();
+              fireZ += (trunkR + eps)*sinA+ 2*Math.random();
+              fireY = eps;
+              baseR  = trunkR * 1.8;
+              height = trunkH * this.fireHeightFactor;
+              break;
+            case 1: // on trunk side
+              fireX += (trunkR + eps)*cosA;
+              fireZ += (trunkR + eps)*sinA;
+              fireY = trunkH * (0.3 + Math.random()*0.4);
+              baseR  = trunkR * 1.2;
+              height = trunkH * this.fireHeightFactor;
+              break;
+            case 2: // in canopy
+              fireX += (canopyR*0.6 + eps)*cosA-0.5;
+              fireZ += (canopyR*0.6 + eps)*sinA-0.5;
+              fireY = trunkH * 0.8;
+              baseR  = trunkR * 1.5;
+              height = trunkH * this.fireHeightFactor;
+              break;
+          }
+
+      
+          entry.fire.push( new MyFire(
+            this.scene,
+            [ fireX, fireY, fireZ ],
+            { radius:        sphereRadius,
+              count:         this.fireLayers * 5,    
+              maxHeight:     coneMaxHeight,
+              maxBaseRadius: coneMaxBaseRadius,
+              fireScale: this.fireScale,
+              slices:        8 }
+          ));
+        }
+      }
     }
   }
 
-  display() {
+
+  update(dt) {
+    for (const entry of this.trees) {
+      for (const f of entry.fire) {
+        if (f.update) f.update(dt);
+      }
+    }
+  }
+
+
+  display(showFires = true) {
     this.scene.pushMatrix();
       this.scene.translate(
         this.position[0],
         this.position[1],
         this.position[2]
       );
-      for (const { tree, x, z } of this.trees) {
+      for (const posi of this.trees) {
         this.scene.pushMatrix();
-          this.scene.translate(x, 0, z);
-          tree.display();
+          this.scene.translate(posi.x, 0,posi.z);
+          posi.tree.display();
         this.scene.popMatrix();
+        if (showFires) {
+          for (const f of posi.fire) {
+            f.display();
+          }
+        }
       }
     this.scene.popMatrix();
   }
