@@ -75,7 +75,7 @@ export class MyScene extends CGFscene {
     this.displayGround = true;
     this.groundScale = 400;
     // GRASS
-    this.displayGrass = false;
+    this.displayGrass = true;
     // SKY SPHERE
     this.displayPanorama = true;
     this.panoramaScale = 200;
@@ -103,7 +103,7 @@ export class MyScene extends CGFscene {
     //fire
     this.displayFire = true;
     this.fireProbability = 0.5; 
-    this.fireInstances = 3;
+    this.fireInstances = 5;
     this.fireScale = 1.5;
 
     //---------------------------------------------------//
@@ -177,6 +177,8 @@ export class MyScene extends CGFscene {
 
     if (this.forest && typeof this.forest.update === 'function')
       this.forest.update(delta);
+    this.building.update(delta);
+
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
