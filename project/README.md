@@ -19,6 +19,11 @@
 ### Helicopter getting water
 ![project-t07g06-5.png](project/screenshots/project-t07g06-5.png)
 
+### Helicopter putting the fire out
 ![project-t07g06-6.png](project/screenshots/project-t07g06-6.png)
+
+### Fire
 ![project-t07g06-7.png](project/screenshots/project-t07g06-7.png)
+
+### Full Project with additional development C
 ![project-t07g06-8.png](project/screenshots/project-t07g06-8.png)
