@@ -1,4 +1,4 @@
-import {CGFobject, CGFappearance, CGFshader} from '../lib/CGF.js';
+import {CGFobject, CGFappearance, CGFshader, CGFtexture} from '../lib/CGF.js';
 /**
 * MyPlane
 * @constructor
@@ -10,7 +10,7 @@ import {CGFobject, CGFappearance, CGFshader} from '../lib/CGF.js';
  * @param maxT - maximum texture coordinate in T
 */
 export class MyPlane extends CGFobject {
-	constructor(scene, nrDivs, minS, maxS, minT, maxT, texture) {
+	constructor(scene, nrDivs, minS, maxS, minT, maxT, grassUrl, maskUrl) {
 		super(scene);
 		// nrDivs = 1 if not provided
 		nrDivs = typeof nrDivs !== 'undefined' ? nrDivs : 1;
@@ -23,61 +23,65 @@ export class MyPlane extends CGFobject {
 		this.q = (this.maxS - this.minS) / this.nrDivs;
 		this.w = (this.maxT - this.minT) / this.nrDivs;
 
-		this.texture = texture;
+		this.grassTexture = new CGFtexture(scene, grassUrl);
+    	this.maskTexture = new CGFtexture(scene, maskUrl);
 				
 		this.material = new CGFappearance(scene);
-		this.material.setAmbient(0.5, 0.5, 0.5, 1);
+		this.material.setAmbient(1, 1, 1, 1);
 		this.material.setDiffuse(0.5, 0.5, 0.5, 1);
 		this.material.setSpecular(0, 0, 0, 1);
-		this.material.setEmission(0, 0, 0, 1);
-		this.material.setTexture(this.texture);
+		this.material.setEmission(1, 1, 1, 1);
+		this.material.setTexture(this.grassTexture);
 		this.material.setTextureWrap('MIRRORED_REPEAT', 'REPEAT');
 		this.material.setShininess(10);
 
 		this.groundShaders = new CGFshader(this.scene.gl, 'shaders/ground.vert', 'shaders/ground.frag');
 		this.groundShaders.setUniformsValues({
-			uLakeCenter: [0.35, 0.2],
-			uLakeRadius: 0.2,
-			uSampler : 0
+			uGrassSampler: 0,
+      		uMaskSampler: 1,
+			uRepeats: 15.0 
 		});
 
 		this.initBuffers();
 	}
 	initBuffers() {
-		// Generate vertices, normals, and texCoords
 		this.vertices = [];
-		this.normals = [];
+		this.normals  = [];
 		this.texCoords = [];
-		var yCoord = 0.5;
-		for (var j = 0; j <= this.nrDivs; j++) {
-			var xCoord = -0.5;
-			for (var i = 0; i <= this.nrDivs; i++) {
-				this.vertices.push(xCoord, yCoord, 0);
-				this.normals.push(0, 0, 1);
-				const repeats = 15;  
-				const du = repeats / this.nrDivs;
-				const dv = repeats / this.nrDivs;
-
-				this.texCoords.push(i * du, j * dv);
-				xCoord += this.patchLength;
-			}	
-			yCoord -= this.patchLength;
-		}
-		// Generating indices
 		this.indices = [];
 
-		var ind = 0;
-		for (var j = 0; j < this.nrDivs; j++) {
-			for (var i = 0; i <= this.nrDivs; i++) {
-				this.indices.push(ind);
-				this.indices.push(ind + this.nrDivs + 1);
-				ind++;
+		const repeats = 15;
+		const step = 1.0 / this.nrDivs;
+		let y = 0.5;
+
+		for (let j = 0; j <= this.nrDivs; j++) {
+			let x = -0.5;
+			for (let i = 0; i <= this.nrDivs; i++) {
+				this.vertices.push(x, y, 0);
+				this.normals.push(0, 0, 1);
+
+				const u = (i * repeats) / this.nrDivs;
+				const v = (j * repeats) / this.nrDivs;
+				this.texCoords.push(u, v);
+
+				x += step;
+			}
+			y -= step;
+		}
+
+		let index = 0;
+		for (let j = 0; j < this.nrDivs; j++) {
+			for (let i = 0; i <= this.nrDivs; i++) {
+				this.indices.push(index);
+				this.indices.push(index + this.nrDivs + 1);
+			index++;
 			}
 			if (j + 1 < this.nrDivs) {
-				this.indices.push(ind + this.nrDivs);
-				this.indices.push(ind);
+				this.indices.push(index + this.nrDivs);
+				this.indices.push(index);
 			}
 		}
+
 		this.primitiveType = this.scene.gl.TRIANGLE_STRIP;
 		this.initGLBuffers();
 	}
@@ -101,6 +105,9 @@ export class MyPlane extends CGFobject {
 		gl.enable(gl.BLEND);
     	gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 		this.material.apply();
+		
+		this.maskTexture.bind(1);
+
 		super.display();
 		gl.disable(gl.BLEND);
 

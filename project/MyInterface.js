@@ -108,21 +108,25 @@ export class MyInterface extends CGFinterface {
             skySphereFolder.add(this.scene,"panoramaTextureKey",Object.keys(this.scene.panoramaTextures)).name("Texture"); // change texture
             skySphereFolder.add(this.scene, "panoramaFollowCamera").name("Follow Camera"); // follow camera
             // -----------
+        // Forest Folder
         let forestFolder = sceneElementsFolder.addFolder("Forest");
-            // Forest controls
+        // V //
             forestFolder.add(this.scene, 'displayForest').name('Show Forest');
             forestFolder.add(this.scene, 'forestCount', 0, 300, 1).name('Tree Count').onChange(() => this.scene.updateForest());
             forestFolder.add(this.scene, 'forestSemiRadius', 0, 180, 1).name('Forest Radius').onChange(() => this.scene.updateForest());
-            forestFolder.add(this.scene, 'displayFire').name('Show Fire');
-            forestFolder.add(this.scene, 'fireProbability', 0, 1, 0.01).name('Fire Area').onChange((val) =>{
+            // -----------
+        // Fire Folder
+        let fireFolder = sceneElementsFolder.addFolder("Fire");
+            fireFolder.add(this.scene, 'displayFire').name('Show Fire');
+            fireFolder.add(this.scene, 'fireProbability', 0, 1, 0.01).name('Fire Area').onChange((val) =>{
               this.scene.forest.fireProbability = val;
               this.scene.forest.applyFires();
             });
-            forestFolder.add(this.scene, 'fireInstances', 1, 10, 1).name('Fires per Tree').onChange((val) => {
+            fireFolder.add(this.scene, 'fireInstances', 1, 10, 1).name('Fires per Tree').onChange((val) => {
               this.scene.forest.fireInstances = val;
               this.scene.forest.applyFires();
             });
-            forestFolder.add(this.scene, 'fireScale', 0.2, 2.0, 0.1).name('Fire Scale').onChange((val) => {
+            fireFolder.add(this.scene, 'fireScale', 0.2, 2.0, 0.1).name('Fire Scale').onChange((val) => {
               this.scene.forest.fireScale = val;
               this.scene.forest.applyFires();
             });
@@ -224,7 +228,7 @@ export class MyInterface extends CGFinterface {
         if (!this.scene.heli.hasWater && !this.scene.lake.is_above(this.scene.heli.position)){
           this.scene.heli.handleLpress();
         }
-        else if (!this.scene.heli.hasWater && this.scene.lake.is_above(this.scene.heli.position) && this.scene.heli.heliIsStabilized()) {
+        else if (!this.scene.heli.hasWater && this.scene.lake.is_above(this.scene.heli.position) && this.scene.heli.heliIsStabilized() && this.scene.heli.isOff) {
           this.scene.heli.approachingWater = true;
           this.scene.heli.cruiseHeight = -this.scene.heli.helipadPos[1];
         }
@@ -232,6 +236,13 @@ export class MyInterface extends CGFinterface {
       if (event.code === "KeyR") {
         this.scene.heli.reset();
       }
+      if (event.code === "KeyO" && this.scene.heli.hasWater) {
+        this.scene.heli.handleOpress();
+      }
+      if (event.code === "KeyZ") {
+        this.scene.heli.hasWater = true;
+      }
+      
     } else {
       if (event.code === "KeyC") {
         this.scene.helicopterMode = true;

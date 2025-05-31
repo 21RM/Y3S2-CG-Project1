@@ -1,4 +1,5 @@
 import { CGFscene, CGFcamera, CGFaxis, CGFtexture} from "../lib/CGF.js";
+import { MyCircle } from "./MyCircle.js";
 import { MyPlane } from "./MyPlane.js";
 import { MyPanorama } from './MyPanorama.js';
 import { MyHeli } from "./MyHeli.js";
@@ -41,10 +42,12 @@ export class MyScene extends CGFscene {
 
     //-------- Initialize scene objects and variables ------------//
     this.axis = new CGFaxis(this, 20, 1);
-    this.ground = new MyPlane(this, 1, 0, 1, 0, 1, new CGFtexture(this, 'textures/grass.png'));
+    this.ground = new MyPlane(this, 1, 0, 1, 0, 1, 'textures/grass.png', 'textures/lake_mask.png');
     this.grass = new MyGrass(this);
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
+    //circle
+    this.lakeCircle = new MyCircle(this, 80, 100, "textures/transparent.png");
     //heli related
     this.heliPosition = vec3.fromValues(0, 0, 0);
     this.heliVelocity = vec3.fromValues(0, 0, 0);
@@ -59,10 +62,13 @@ export class MyScene extends CGFscene {
     this.forestSemiRadius = 170;
     //Lake related
     this.lake = new MyLake(this);
+    //Water drops related
+    this.waterDrops = [];   // active droplets
+    this.fireCleared = false;
 
     //------- Variables connnected to myInterface -------//
     // ABSTRACT
-    this.frSaver = false;
+    this.frSaver = true;
     // AXIS
     this.displayAxis = false;
     // GROUND
@@ -97,8 +103,8 @@ export class MyScene extends CGFscene {
     //fire
     this.displayFire = true;
     this.fireProbability = 0.5; 
-    this.fireInstances = 1;
-    this.fireScale     = 1.0;
+    this.fireInstances = 3;
+    this.fireScale = 1.5;
 
     //---------------------------------------------------//
 
@@ -122,13 +128,11 @@ export class MyScene extends CGFscene {
     // ------------------------------------------------------------- //
     // Geração de floresta
     this.updateForest = () => {
-      this.forest = new MyForest(this,
-        this.forestCount,
-        1,1,1,
+      this.forest = new MyForest(this, this.forestCount, 1,1,1,
         {
-          useSemiCircle:   true,
-          semiRadius:   this.forestSemiRadius ,
-          semiCenter:      [-15, -10],
+          useSemiCircle: true,
+          semiRadius: this.forestSemiRadius,
+          semiCenter: [-15, -10],
           semiRotationDeg: 115,
           fireProbability: this.fireProbability,
           fireInstances: this.fireInstances,
@@ -162,6 +166,14 @@ export class MyScene extends CGFscene {
     this.heli.update(delta);
     this.grass.update(delta);
     this.lake.update(delta);
+    this.forest.fireInstancer.update(delta);
+    for (let i = this.waterDrops.length - 1; i >= 0; i--) {
+      const drop = this.waterDrops[i];
+      drop.update(delta / 1000);
+      if (drop.done) {
+        this.waterDrops.splice(i, 1);
+      }
+    }
 
     if (this.forest && typeof this.forest.update === 'function')
       this.forest.update(delta);
@@ -238,6 +250,12 @@ export class MyScene extends CGFscene {
     }
 
     this.setDefaultAppearance();
+
+    if (this.displayHeli) { // Draw helicopter
+      this.pushMatrix();
+      this.heli.display();
+      this.popMatrix();
+    }
     
     if (this.displayGrass) {
       this.pushMatrix();
@@ -251,6 +269,20 @@ export class MyScene extends CGFscene {
       this.panorama.display();
     }
 
+    // Draw Lake
+    if (this.displayLake) {
+      this.lake.display();
+    }
+
+    // Draw lake circle frame rate friendly
+    if (this.frSaver){
+      this.pushMatrix();
+      this.translate(140, 0.1, -80);
+      this.rotate(-Math.PI/2, 1, 0, 0);
+      this.lakeCircle.display();
+      this.popMatrix();
+    }
+
     // Draw ground
     if (this.displayGround) {
       this.pushMatrix();
@@ -260,23 +292,12 @@ export class MyScene extends CGFscene {
       this.popMatrix();
     }
 
-    if (this.displayLake && !this.frSaver) {
-      this.lake.display();
-    }
-
     if (this.displayBuilding) {
       this.pushMatrix();
       this.translate(this.buildingPos[0], this.buildingPos[1], this.buildingPos[2]);
       this.rotate(Math.PI, 0, 1, 0);
       this.scale(this.buildingScale[0], this.buildingScale[1], this.buildingScale[2]); 
       this.building.display();
-      this.popMatrix();
-    }
-    
-    
-    if (this.displayHeli) { // Draw helicopter
-      this.pushMatrix();
-      this.heli.display();
       this.popMatrix();
     }
 
@@ -289,6 +310,11 @@ export class MyScene extends CGFscene {
       this.pushMatrix();
       this.forest.display(this.displayFire);
       this.popMatrix();
+    }
+
+    //draw drops:
+    for (const drop of this.waterDrops) {
+      drop.display();
     }
 
   }

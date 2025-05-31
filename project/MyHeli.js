@@ -4,6 +4,7 @@ import { MyCylinder } from './MyCylinder.js';
 import { MyPrismSolid } from './MyPrismSolid.js';
 import { MySphere } from './MySphere.js';
 import { MyBucket } from './MyBucket.js';
+import { MyWaterDrop } from "./MyWaterDrop.js";
 
 export class MyHeli extends CGFobject {
     /** 
@@ -833,7 +834,7 @@ export class MyHeli extends CGFobject {
                     this.fillingWater = true;
                 }
 
-                if (!this.bucketOut){
+                if (!this.bucketOut && !this.parking){
                     this.bucketOuting = true;
                 }
             }
@@ -904,14 +905,26 @@ export class MyHeli extends CGFobject {
                 break;
             case 4: //ROTATE AGAIN
                 if (!(this.rotation == Math.PI)){
-                    this.rotateToHelipad(timeDelta, true)
+                    this.rotateToHelipad(timeDelta, true);
                 } else {
                     this.turnInput = 0;
                     this.parkingStep = 5;
                     this.pointingToHelipad = false;
                 }
                 break;
-            case 5: //PARK
+            case 5: // Get bucket inside
+                this.bucketIning = true;
+                if (this.bucketOut) {
+                    this.bucketMoving(0.001, 2, timeDelta);
+                }
+                else {
+                    this.parkingStep = 6;
+                    this.bucketOut = false;
+                    this.bucketOuting = false;
+                    this.bucketIning = false;
+                }
+                break;
+            case 6: //PARK
                 if (this.counter == 0) {
                     this.takingOff = true;
                     this.isOff = false
@@ -1037,7 +1050,7 @@ export class MyHeli extends CGFobject {
         this.bucketOuting = false;
         this.bucketPartsHeight = 2;
         this.bucketHeight = -0.8;
-
+        this.bucketIning = false;
     }
 
     fillWater(timeDelta){
@@ -1079,7 +1092,7 @@ export class MyHeli extends CGFobject {
     }
 
     bucketMoving(speed, final_pos, deltaTime) {
-        if (this.bucketPartsHeight - final_pos > 0 && this.bucketHeight - final_pos - 3 < 0){
+        if (this.bucketPartsHeight - final_pos > 0 && this.bucketHeight - final_pos - 3 < 0 && this.bucketOuting){
             if (!(this.bucketHeight <= final_pos - 1.2)){
                 this.bucketHeight = Math.max(final_pos-1.2, this.bucketHeight - speed * deltaTime);
             }
@@ -1088,12 +1101,111 @@ export class MyHeli extends CGFobject {
                 this.bucketHeight = Math.max(final_pos-3.2, this.bucketHeight - speed * deltaTime);
             }
         }
-        else if (this.bucketPartsHeight - final_pos < 0){
-            this.bucketPartsHeight = Math.min(final_pos, this.bucketPartsHeight + speed * deltaTime);
+        else if ((this.bucketHeight + final_pos - 1.2 < 0) && this.bucketIning){
+            if (this.bucketHeight < -1.2 ) {
+                this.bucketHeight = Math.round(Math.min(final_pos-3.2, this.bucketHeight + speed * deltaTime) * 100) / 100; 
+                this.bucketPartsHeight = Math.min(final_pos, this.bucketPartsHeight + speed * deltaTime);
+            }
+            else {
+                this.bucketHeight = Math.round(Math.min(final_pos-2.8, this.bucketHeight + speed * deltaTime) * 100) / 100;
+            }
         }
         else {
+            this.bucketIning = false;
             this.bucketOuting = false;
-            this.bucketOut = true;
+            this.bucketOut = !this.bucketOut;
+        }
+    }
+
+    handleOpress() {
+        const bucketX = this.position[0];
+        const bucketZ = this.position[2];
+        const bucketBottomY = -3 * this.heliScale[1];
+
+        this.fireCleared = false;
+
+        const [centerX, centerZ] = this.scene.forest.fireCenter;
+        const fireRadius         = this.scene.forest.fireProbability * this.scene.forest.maxFireRadius;
+        const dxb = bucketX - centerX;
+        const dzb = bucketZ - centerZ;
+
+        if (dxb*dxb + dzb*dzb > fireRadius*fireRadius) {
+            return;
+        }
+
+        this.hasWater = false;
+
+        const numDrops = 100;
+        const fireHeight = 0.0;
+
+        const clearRadius = 30.0;
+        const clearRadiusSq = clearRadius * clearRadius;
+
+        for (let i = 0; i < numDrops; i++) {
+            const offsetX = (Math.random() * 2 - 1) * 0.5;
+            const offsetZ = (Math.random() * 2 - 1) * 0.5;
+
+            const startPos = [
+            bucketX + offsetX,
+            bucketBottomY + this.position[1],
+            bucketZ + offsetZ
+            ];
+
+            const spraySpeed = 10.0;
+            const vx = (Math.random() * 2 - 1) * spraySpeed * 0.3;
+            const vz = (Math.random() * 2 - 1) * spraySpeed * 0.3;
+            const vy = -1 - Math.random() * 2;
+            const initVel = [vx, vy, vz];
+
+            const scale = 0.5 + Math.random() * 0.5;
+
+            const startDelay = Math.random() * 0.5;
+
+            const drop = new MyWaterDrop(
+            this.scene,
+            startPos,
+            initVel,
+            scale,
+            () => {
+                if (!this.fireCleared) {
+                this.fireCleared = true;
+                setTimeout(() => {
+                    const fi      = this.scene.forest.fireInstancer;
+                    const oldOff  = fi.offsets;
+                    const oldAxes = fi.axes;
+                    const oldAng  = fi.angles;
+                    const oldSc   = fi.scales;
+                    let k = 0;
+
+                    for (let idx = 0; idx < fi.usedCones; idx++) {
+                    const cx = oldOff[idx*3 + 0];
+                    const cz = oldOff[idx*3 + 2];
+                    const dxc = cx - bucketX;
+                    const dzc = cz - bucketZ;
+                    if (dxc*dxc + dzc*dzc > clearRadiusSq) {
+                        fi.offsets[k*3 + 0] = oldOff[idx*3 + 0];
+                        fi.offsets[k*3 + 1] = oldOff[idx*3 + 1];
+                        fi.offsets[k*3 + 2] = oldOff[idx*3 + 2];
+                        fi.axes   [k*3 + 0] = oldAxes[idx*3 + 0];
+                        fi.axes   [k*3 + 1] = oldAxes[idx*3 + 1];
+                        fi.axes   [k*3 + 2] = oldAxes[idx*3 + 2];
+                        fi.angles [k    ]   = oldAng[idx];
+                        fi.scales [k*3 + 0] = oldSc[idx*3 + 0];
+                        fi.scales [k*3 + 1] = oldSc[idx*3 + 1];
+                        fi.scales [k*3 + 2] = oldSc[idx*3 + 2];
+                        k++;
+                    }
+                    }
+                    fi.usedCones = k;
+                    fi.uploadBuffers();
+                }, 350);
+                }
+            },
+            fireHeight,
+            startDelay
+            );
+
+            this.scene.waterDrops.push(drop);
         }
     }
 }

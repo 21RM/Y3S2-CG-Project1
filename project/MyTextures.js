@@ -166,5 +166,7 @@ export class TextureManager {
     this.scene.treeShadowAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
 
     // --------------------------------------- //
+    // WATER drops
+    this.scene.dropsTex = new CGFtexture(this.scene, 'textures/water.png');
   }
 }

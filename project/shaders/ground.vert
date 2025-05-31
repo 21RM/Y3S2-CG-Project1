@@ -1,17 +1,20 @@
-#version 300 es
+#ifdef GL_ES
 precision mediump float;
+#endif
 
-layout(location = 0) in vec3 aVertexPosition;
-layout(location = 2) in vec2 aTextureCoord;
+attribute vec3 aVertexPosition;
+attribute vec2 aTextureCoord;
 
 uniform mat4 uMVMatrix;
 uniform mat4 uPMatrix;
 
-out vec2 vTexCoord;
-out vec2 vPlanePos;
+varying vec2 vGrassUV;
+varying vec2 vMaskUV;
+uniform float uRepeats;
 
 void main() {
-    vPlanePos = aVertexPosition.xy;
-    vTexCoord = aTextureCoord;
+    vGrassUV = aTextureCoord;
+    vMaskUV  = aTextureCoord / uRepeats;
+
     gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
 }

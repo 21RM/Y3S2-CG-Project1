@@ -1,19 +1,18 @@
-#version 300 es
+#ifdef GL_ES
 precision mediump float;
+#endif
 
-in vec2  vTexCoord;
-in vec2  vPlanePos;
+varying vec2 vGrassUV;
+varying vec2 vMaskUV;
 
-uniform sampler2D uSampler;
-uniform vec2 uLakeCenter;
-uniform float uLakeRadius;
-
-out vec4 fragColor;
+uniform sampler2D uGrassSampler; 
+uniform sampler2D uMaskSampler;
 
 void main() {
-    vec2 d = vPlanePos - uLakeCenter;
-    float rSq = uLakeRadius * uLakeRadius;
-    if (dot(d, d) < rSq)
+    float m = texture2D(uMaskSampler, vMaskUV).r;
+    if (m < 0.5) {
         discard;
-    fragColor = texture(uSampler, vTexCoord);
+    }
+    vec4 grassColor = texture2D(uGrassSampler, vGrassUV);
+    gl_FragColor = grassColor;
 }
