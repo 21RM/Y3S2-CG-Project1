@@ -58,15 +58,36 @@ export class TextureManager {
         this.scene.heliPortCapAppr.setSpecular(0.1, 0.1, 0.1, 1);
         this.scene.heliPortCapAppr.setShininess(5);
         this.scene.heliPortCapAppr.setEmission(0.5, 0.5, 0.5, 1);
+
         // Heliport H
-        this.scene.helipadAppr = new CGFappearance(this.scene);
-        this.scene.helipadAppr.setAmbient (0.6, 0.6, 0.6, 1);
-        this.scene.helipadAppr.setDiffuse (0.1,0.1,0.1,1);
-        this.scene.helipadAppr.setSpecular(0.1, 0.1, 0.1, 1);
-        this.scene.helipadAppr.setShininess(10);
-        this.scene.helipadAppr.setEmission(0.5, 0.5, 0.5, 1);
-        this.scene.helipadAppr.loadTexture('textures/helipad.png');
-        this.scene.helipadAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+        this.scene.helipadHAppr = new CGFappearance(this.scene);
+        this.scene.helipadHAppr.setAmbient (0.6, 0.6, 0.6, 1);
+        this.scene.helipadHAppr.setDiffuse (0.1, 0.1, 0.1, 1);
+        this.scene.helipadHAppr.setSpecular(0.1, 0.1, 0.1, 1);
+        this.scene.helipadHAppr.setShininess(10);
+        this.scene.helipadHAppr.setEmission(0.5, 0.5, 0.5, 1);
+        this.scene.helipadHAppr.loadTexture('textures/helipad.png');
+        this.scene.helipadHAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+        // Heliport UP
+        this.scene.helipadUpAppr = new CGFappearance(this.scene);
+        this.scene.helipadUpAppr.setAmbient (0.6, 0.6, 0.6, 1);
+        this.scene.helipadUpAppr.setDiffuse (0.1, 0.1, 0.1, 1);
+        this.scene.helipadUpAppr.setSpecular(0.1, 0.1, 0.1, 1);
+        this.scene.helipadUpAppr.setShininess(10);
+        this.scene.helipadUpAppr.setEmission(0.5, 0.5, 0.5, 1);
+        this.scene.helipadUpAppr.loadTexture('textures/helipad_up.png');
+        this.scene.helipadUpAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
+
+        // Heliport DOWN
+        this.scene.helipadDownAppr = new CGFappearance(this.scene);
+        this.scene.helipadDownAppr.setAmbient (0.6, 0.6, 0.6, 1);
+        this.scene.helipadDownAppr.setDiffuse (0.1, 0.1, 0.1, 1);
+        this.scene.helipadDownAppr.setSpecular(0.1, 0.1, 0.1, 1);
+        this.scene.helipadDownAppr.setShininess(10);
+        this.scene.helipadDownAppr.setEmission(0.5, 0.5, 0.5, 1);
+        this.scene.helipadDownAppr.loadTexture('textures/helipad_down.png');
+        this.scene.helipadDownAppr.setTextureWrap('CLAMP_TO_EDGE','CLAMP_TO_EDGE');
     // --------------------------------------- //
 
     // -------------- MyWindow --------------- //

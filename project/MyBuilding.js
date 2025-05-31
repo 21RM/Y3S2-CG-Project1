@@ -67,9 +67,50 @@ export class MyBuilding extends CGFobject {
         this.doorFrameSide = new MyPrismSolid(scene, [1, 0.8], [1, 0.8], 20);
         this.sign = new MyPrismSolid(scene, [25, 1], [25, 1], 6);
 
-        this.helipadPlane = new MyQuad(scene, 1, null, this.scene.helipadAppr);
+        this.lights_solid = new MyPrismSolid(scene, [3,3], [3,3], 3);
+
+        this.helipadHAppr    = this.scene.helipadHAppr;    
+        this.helipadUpAppr   = this.scene.helipadUpAppr;   
+        this.helipadDownAppr = this.scene.helipadDownAppr;
+
+        this.helipadPlaneH = new MyQuad(scene, 1, null, this.helipadHAppr);
+        this.helipadPlaneUp = new MyQuad(scene, 1, null, this.helipadUpAppr);
+        this.helipadPlaneDown = new MyQuad(scene, 1, null, this.helipadDownAppr);
+
+
+        this.blinkTimer    = 0;    
+        this.blinkInterval = 500;   
+        this.blinkState    = false; 
+
+      
+        this.lightTimer = 0; 
+
+        this.lightAppr = new CGFappearance(scene);
+        this.lightAppr.setAmbient (0.05, 0, 0, 1);
+        this.lightAppr.setDiffuse (0.0, 0.0, 0.0, 1);
+        this.lightAppr.setSpecular(0.2, 0.0, 0.0, 1);
+        this.lightAppr.setShininess(1);
+        this.lightAppr.setEmission(0.8, 0.1, 0.1, 1); 
+
+
+        this.lightIdleAppr = new CGFappearance(scene);
+        this.lightIdleAppr.setAmbient  (0.05, 0.0, 0.0, 1);
+        this.lightIdleAppr.setDiffuse  (0.0, 0.0, 0.0, 1);
+        this.lightIdleAppr.setSpecular (0.15, 0.05, 0.05, 1);
+        this.lightIdleAppr.setShininess(1);
+        this.lightIdleAppr.setEmission(0.05, 0.0, 0.0, 1);
+
     }
 
+    update(deltaTime) {
+    this.blinkTimer += deltaTime;
+    if (this.blinkTimer >= this.blinkInterval) {
+      this.blinkTimer -= this.blinkInterval;
+      this.blinkState = !this.blinkState;
+    }
+
+    this.lightTimer += deltaTime / 1000; 
+    }
     display() {
         const width75 = this.moduleWidth * 0.75;
         const depth75 = this.moduleDepth * 0.75;
@@ -99,10 +140,69 @@ export class MyBuilding extends CGFobject {
         this.scene.pushMatrix();
         this.scene.translate(0, this.floorHeight*this.numFloorsCenter+1.03, 0);
         this.scene.rotate(-Math.PI/2, 1,0,0);
-        this.scene.scale(this.moduleWidth*0.7,this.moduleWidth*0.7, 1);
-        this.scene.helipadAppr.apply();
-        this.helipadPlane.display();
+    
+    
+        const heli    = this.scene.heli;
+        const groundY = this.helipadPos[1];
+        const heliY   = heli.position[1];
+        const eps     = 7; 
+         if (heliY > groundY + eps) {
+            const emissiveFactor = 0.5 * (Math.sin(2 * Math.PI * 1 * this.lightTimer) + 1);
+            this.lightAppr.setEmission(emissiveFactor, emissiveFactor*0.8, emissiveFactor*0.8, 1);
+            this.lightAppr.apply();
+        } else {
+            this.lightIdleAppr.apply();
+        }
+
+           
+
+        this.scene.pushMatrix();
+        this.scene.translate(34, 0,0.1);
+        this.lights_solid.display(); 
         this.scene.popMatrix();
+
+        
+        this.scene.pushMatrix();
+        this.scene.translate(0,34, 0.1);
+        this.lights_solid.display();
+        this.scene.popMatrix();
+
+    
+        this.scene.pushMatrix();
+        this.scene.translate(0, -34, 0.1);
+        this.lights_solid.display();
+        this.scene.popMatrix();
+
+    
+        this.scene.pushMatrix();
+        this.scene.translate(-34, 0, 0.1);
+        this.lights_solid.display();
+        this.scene.popMatrix();
+        
+        this.scene.scale(this.moduleWidth*0.7,this.moduleWidth*0.7, 1);
+
+        
+        if (heliY > groundY + eps) {
+            if (heli.descending) {
+            if (this.blinkState) {
+                this.helipadPlaneH.display();
+            } else {
+                this.helipadPlaneDown.display();
+            }
+            } else {
+            if (this.blinkState) {
+                this.helipadPlaneH.display();
+            } else {
+                this.helipadPlaneUp.display();
+            }
+            }
+        } else {
+            this.helipadPlaneH.display();
+        }
+        this.scene.popMatrix();
+
+       
+
 
         // Right module
         this.scene.pushMatrix();

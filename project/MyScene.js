@@ -153,6 +153,8 @@ export class MyScene extends CGFscene {
     this.heli.update(delta);
     this.grass.update(delta);
     this.lake.update(delta);
+    this.building.update(delta);
+
 
     if (this.followHeli1P){
       const [hx, hy, hz] = this.heli.position;
