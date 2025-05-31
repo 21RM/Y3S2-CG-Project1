@@ -5,7 +5,7 @@
 - Joana Luís Sá Marques Pimenta (up202206120)
 
 ### Sky-Sphere
-![project-t07g06-1.png](project-t07g06-1.png)
+![project-t07g06-1.png](screenshots\project-t07g06-1.png)
 
 
 
