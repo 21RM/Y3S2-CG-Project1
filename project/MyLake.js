@@ -24,7 +24,7 @@ export class MyLake extends CGFobject {
         this.bowlAppearence.setSpecular(0.0, 0.0, 0.0, 1);
         this.bowlAppearence.setShininess(20);
         this.bowlAppearence.setEmission(0.7, 0.7, 0.7, 1);
-        this.bowlAppearence.loadTexture("textures/lakeBowl.png");
+        this.bowlAppearence.loadTexture("textures/lakeBowl.jpg");
 
         // SAND
         this.sand = new MyCylinder(scene, 10, 50, 80.1, 100, 1, true, true, 10, 1);

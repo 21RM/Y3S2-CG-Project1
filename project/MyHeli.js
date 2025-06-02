@@ -132,7 +132,7 @@ export class MyHeli extends CGFobject {
         this.heliRedAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.heliRedAppearance.setSpecular(0.9, 0.9, 0.9, 1);
         this.heliRedAppearance.setShininess(300);
-        this.heliRedAppearance.loadTexture("textures/helicopterRed.png");
+        this.heliRedAppearance.loadTexture("textures/helicopterRed.jpg");
 
         // front cockpick
         this.cockpitFrontAppearance = new CGFappearance(this.scene);
@@ -205,7 +205,7 @@ export class MyHeli extends CGFobject {
         this.metalicAppearance.setDiffuse(0.2, 0.2, 0.2, 1);
         this.metalicAppearance.setSpecular(0.9, 0.9, 0.9, 1);
         this.metalicAppearance.setShininess(300);
-        this.metalicAppearance.loadTexture("textures/metal.png");
+        this.metalicAppearance.loadTexture("textures/metal.jpg");
 
         // helice
         this.heliceAppearance = new CGFappearance(this.scene);

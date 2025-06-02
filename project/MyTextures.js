@@ -110,12 +110,12 @@ export class TextureManager {
         // Sill shadow
         this.scene.sillShadeTex = new CGFtexture(this.scene, 'textures/sillShadow.png');
         // Window Glass
-        this.scene.windowTex1 = new CGFtexture(this.scene, 'textures/window_first.png');
-        this.scene.windowTex2 = new CGFtexture(this.scene, 'textures/window_glass_reflective.png');
-        this.scene.windowTex3 = new CGFtexture(this.scene, 'textures/window_sky_first.png');
-        this.scene.windowTex4 = new CGFtexture(this.scene, 'textures/window_sky_middle.png');
-        this.scene.windowTex5 = new CGFtexture(this.scene, 'textures/window_sky_last.png');
-        this.scene.windowTex6 = new CGFtexture(this.scene, 'textures/window_sky_last.png');
+        this.scene.windowTex1 = new CGFtexture(this.scene, 'textures/window_first.jpg');
+        this.scene.windowTex2 = new CGFtexture(this.scene, 'textures/window_glass_reflective.jpg');
+        this.scene.windowTex3 = new CGFtexture(this.scene, 'textures/window_sky_first.jpg');
+        this.scene.windowTex4 = new CGFtexture(this.scene, 'textures/window_sky_middle.jpg');
+        this.scene.windowTex5 = new CGFtexture(this.scene, 'textures/window_sky_last.jpg');
+        this.scene.windowTex6 = new CGFtexture(this.scene, 'textures/window_sky_last.jpg');
     // --------------------------------------- //
 
     // -------------- MyTree --------------- //
@@ -125,7 +125,7 @@ export class TextureManager {
     this.scene.trunkAppearance.setDiffuse(0.6, 0.6, 0, 6);
     this.scene.trunkAppearance.setSpecular(0.1, 0.1, 0.1, 1);
     this.scene.trunkAppearance.setShininess(10);
-    this.scene.trunkAppearance.loadTexture('textures/trunk.png');
+    this.scene.trunkAppearance.loadTexture('textures/trunk.jpg');
     this.scene.trunkAppearance.setTextureWrap('REPEAT','REPEAT');
 
     // Foliage

@@ -42,7 +42,7 @@ export class MyScene extends CGFscene {
 
     //-------- Initialize scene objects and variables ------------//
     this.axis = new CGFaxis(this, 20, 1);
-    this.ground = new MyPlane(this, 1, 0, 1, 0, 1, 'textures/grass.png', 'textures/lake_mask.png');
+    this.ground = new MyPlane(this, 1, 0, 1, 0, 1, 'textures/grass.jpg', 'textures/lake_mask.png');
     this.grass = new MyGrass(this);
     let panoramaTexture = new CGFtexture(this, 'textures/sky.png');
     this.panorama = new MyPanorama(this, panoramaTexture);
